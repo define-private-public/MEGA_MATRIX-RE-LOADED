@@ -43,7 +43,7 @@ int cReset = 12;
 
 
 // Some patterns
-byte CSH_logo[32 * 3] = {
+byte CSH_logo[24 * 3] = {
    B00000000, B00000000, B00000000,
    B00111111, B11111111, B10011110,
    B01111111, B11111111, B11011110,
@@ -69,6 +69,16 @@ byte CSH_logo[32 * 3] = {
    B00000000, B00000000, B00000000,
 };
 
+// Image that will be displayed
+byte image[24 * 3] = {
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+};
+
 
 void setup() {
   // Set everything to output
@@ -82,8 +92,43 @@ void setup() {
   pinMode(cLatch, OUTPUT);
   pinMode(cEnable, OUTPUT);
   pinMode(cReset, OUTPUT);
+  
+  // Turn on output, disable reset
+  digitalWrite(rEnable, LOW);
+  digitalWrite(cEnable, LOW);
+  digitalWrite(rReset, HIGH);
+  digitalWrite(cReset, HIGH);
+  
+  // XOR the whole image (pre-process)
+  for (int i = 0; i < (24 * 3); i++)
+    image[i] ^= CSH_logo[i];
 }
 
-void loop() {
+void loop() {  
+  // Put up the image
+  for (int r = 0; r < 32; r++) {
+   
+   // Latches go LOW
+   digitalWrite(rLatch, LOW);
+   digitalWrite(cLatch, LOW);
+   
+   for (int c = 0; c < 3; c++) {
+     // Setup the "receivers"
+     shiftOut(cData, cClock, MSBFIRST, image[c]);
+   }
+   
+   // Change the "emiiter" row
+   byte newBit = (r == 0) ? HIGH : LOW;
+   
+   digitalWrite(rData, newBit);
+   digitalWrite(rClock, HIGH);
+   digitalWrite(rClock, LOW);
+   
+   
+   // Turn the latches on
+   digitalWrite(rLatch, HIGH);
+   digitalWrite(cLatch, HIGH);
+  }
   
+  delay(10);
 }
