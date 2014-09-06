@@ -69,14 +69,59 @@ byte CSH_logo[24 * 3] = {
    B00000000, B00000000, B00000000,
 };
 
+byte test_pattern[24 * 3] = {
+   B01001100, B00111011, B00111011,
+   B01110000, B11000100, B11000100,
+   B11110000, B00111011, B00111011,
+   B01111100, B11000100, B11000100,
+   B00001111, B00111011, B00111011,
+   B11000000, B11000100, B11000100,
+   B01111111, B00111011, B00111011,
+   B11000100, B11000100, B11000100,
+   B00111011, B00111011, B00111011,
+   B11000100, B11000100, B11000100,
+   B00111011, B00111011, B00111011,
+   B11000100, B11000100, B11000100,
+   B00111011, B00111011, B00111011,
+   B11000100, B11000100, B11000100,
+   B00111011, B00111011, B00111011,
+   B11000100, B11000100, B11000100,
+   B00111011, B00111011, B00111011,
+   B11000100, B11000100, B11000100,
+   B00111011, B00111011, B00111011,
+   B11000100, B11000100, B11000100,
+   B00111011, B00111011, B00111011,
+   B11000100, B11000100, B11000100,
+   B00111011, B00111011, B00111011,
+   B11000100, B11000100, B11000100,
+};
+
 // Image that will be displayed
 byte image[24 * 3] = {
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+   1, 1, 1, 
+   1, 1, 1, 
+   1, 1, 1, 
+   1, 1, 1,
+   1, 1, 1, 
+   1, 1, 1, 
+   1, 1, 1, 
+   1, 1, 1,
+   1, 1, 1, 
+   1, 1, 1, 
+   1, 1, 1, 
+   1, 1, 1,
+   1, 1, 1, 
+   1, 1, 1, 
+   1, 1, 1, 
+   1, 1, 1,
+   1, 1, 1, 
+   1, 1, 1, 
+   1, 1, 1, 
+   1, 1, 1,
+   1, 1, 1, 
+   1, 1, 1, 
+   1, 1, 1, 
+   1, 1, 1,
 };
 
 
@@ -101,26 +146,107 @@ void setup() {
   
   // XOR the whole image (pre-process)
   for (int i = 0; i < (24 * 3); i++)
-    image[i] ^= CSH_logo[i];
+    image[i] = ~test_pattern[i];
+
 }
 
-void loop() {  
-  // Put up the image
-  for (int r = 0; r < 32; r++) {
+byte miniImage[8] = {
+  B11000011,
+  B10111101,
+  B01011010,
+  B01111110,
+  B01011010,
+  B01100110,
+  B10111101,
+  B11000011,
+};
+
+int ledMapRow[] = {
+B10000000,
+B01000000,
+B00100000,
+B00010000,
+B00001000,
+B00000100,
+B00000010,
+B00000001,
+};
+
+int ledMapColumn[] = {
+B01111111,
+B10111111,
+B11011111,
+B11101111,
+B11110111,
+B11111011,
+B11111101,
+B11111110,
+};
+
+void loop() {
+  
+    for (int i = 0; i < 64; i++) {
+    
+    // take the latchPin low so 
+    // the LEDs don't change while you're sending in bits:
+    digitalWrite(rLatch, LOW);
+    digitalWrite(cLatch, LOW);
+    
+    // shift out the bits:
+    shiftOut(rData, rClock, LSBFIRST, ledMapRow[i / 8]);  
+    shiftOut(cData, cClock, LSBFIRST, ledMapColumn[i % 8]);  
+
+    //take the latch pin high so the LEDs will light up:
+    digitalWrite(rLatch, HIGH);
+    digitalWrite(cLatch, HIGH);
+    
+    // pause before next value
+    delay(100);
+  }
+
+/*  delay(0);
+  
+  // Set columns
+  for (int r = 0; r < 3; r++) {
+    byte row = B10000000 >> r;
+    
+    // The Column
+    shiftOut(cData, cClock, LSBFIRST, miniImage[r]);
+    digitalWrite(cLatch, LOW);
+    digitalWrite(cLatch, HIGH);
+    
+    // The row
+    shiftOut(rData, rClock, LSBFIRST, row);  
+    digitalWrite(rLatch, LOW);
+    digitalWrite(rLatch, HIGH);
+  }
+  // Turn off
+  shiftOut(cData, cClock, LSBFIRST, B11111111);
+  digitalWrite(cLatch, LOW);
+  digitalWrite(cLatch, HIGH);
+  
+  
+/*  
+/*  // Put up the image
+  for (int r = 0; r < 24; r++) {
    
    // Latches go LOW
    digitalWrite(rLatch, LOW);
    digitalWrite(cLatch, LOW);
    
-   for (int c = 0; c < 3; c++) {
+   for (int c = 3; c > 0; c--) {
      // Setup the "receivers"
-     shiftOut(cData, cClock, MSBFIRST, image[c]);
+//     byte b = B01101101;
+//     shiftOut(cData, cClock, LSBFIRST, b);//image[c]);//
+       shiftOut(cData, cClock, MSBFIRST, image[(r * c) + c]);
+       delay(1);
+
    }
    
    // Change the "emiiter" row
-   byte newBit = (r == 0) ? HIGH : LOW;
+   byte nextBit = (r == 0) ? HIGH : LOW;
    
-   digitalWrite(rData, newBit);
+   digitalWrite(rData, nextBit);
    digitalWrite(rClock, HIGH);
    digitalWrite(rClock, LOW);
    
@@ -129,6 +255,6 @@ void loop() {
    digitalWrite(rLatch, HIGH);
    digitalWrite(cLatch, HIGH);
   }
-  
-  delay(10);
+*/  
+//  delay(1);
 }
