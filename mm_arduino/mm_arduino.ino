@@ -245,6 +245,9 @@ void loop() {
   }
 */
   
+  
+  
+/*
   // Set columns
   clsRows();
   for (int r = 0; r < 8; r++) {
@@ -269,36 +272,34 @@ void loop() {
   clsCols();
   clsRows();
   delay(0);
-  
-  
-/*  // Put up the image
-  for (int r = 0; r < 24; r++) {
-   
-   // Latches go LOW
-   digitalWrite(rLatch, LOW);
-   digitalWrite(cLatch, LOW);
-   
-   for (int c = 3; c > 0; c--) {
-     // Setup the "receivers"
-//     byte b = B01101101;
-//     shiftOut(cData, cClock, LSBFIRST, b);//image[c]);//
-       shiftOut(cData, cClock, MSBFIRST, image[(r * c) + c]);
-       delay(1);
-
-   }
-   
-   // Change the "emiiter" row
-   byte nextBit = (r == 0) ? HIGH : LOW;
-   
-   digitalWrite(rData, nextBit);
-   digitalWrite(rClock, HIGH);
-   digitalWrite(rClock, LOW);
-   
-   
-   // Turn the latches on
-   digitalWrite(rLatch, HIGH);
-   digitalWrite(cLatch, HIGH);
-  }
 */  
+  
+  // Put up the image
+  clsRows();
+  delay(10);
+  // Rows
+  for (int r = 0; r < 24; r++) {
+//    clsCols();
+    
+    // Columns
+    digitalWrite(cEnable, HIGH);
+    for (int c = 0; c < 3; c++)
+      shiftOut(cData, cClock, LSBFIRST, CSH_logo[(r * 3) + (3 - c)]);
+    digitalWrite(cLatch, LOW);
+    digitalWrite(cLatch, HIGH);
+    digitalWrite(cEnable, LOW);
+  
+    // the Row
+    digitalWrite(rEnable, HIGH); 
+    digitalWrite(rData, (r == 0) ? HIGH : LOW);
+    digitalWrite(rClock, HIGH);
+    digitalWrite(rClock, LOW);
+    digitalWrite(rLatch, LOW);
+    digitalWrite(rLatch, HIGH);
+    digitalWrite(rEnable, LOW);
+  }
+//  clsCols();
+//  clsRows();
+
 //  delay(1);
 }
