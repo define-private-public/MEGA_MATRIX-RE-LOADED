@@ -161,7 +161,7 @@ void setup() {
   
   // XOR the whole image (pre-process)
   for (int i = 0; i < (24 * 3); i++)
-    image[i] = ~test_pattern[i];
+    image[i] = ~CSH_logo[i];
 
   clsRows();
   clsCols();
@@ -276,15 +276,15 @@ void loop() {
   
   // Put up the image
   clsRows();
-  delay(10);
+//  delay(10);
   // Rows
   for (int r = 0; r < 24; r++) {
-//    clsCols();
+    clsCols();
     
     // Columns
     digitalWrite(cEnable, HIGH);
-    for (int c = 0; c < 3; c++)
-      shiftOut(cData, cClock, LSBFIRST, CSH_logo[(r * 3) + (3 - c)]);
+    for (int c = 2; c >= 0; c--)
+      shiftOut(cData, cClock, LSBFIRST, image[(r * 3) + c ]);
     digitalWrite(cLatch, LOW);
     digitalWrite(cLatch, HIGH);
     digitalWrite(cEnable, LOW);
