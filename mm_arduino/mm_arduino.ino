@@ -125,6 +125,21 @@ byte image[24 * 3] = {
 };
 
 
+void clsCols() {
+  // Clears out all of the columns (Turns them off by setting their values to 1)
+  for (int c = 0; c < 3; c++)
+    shiftOut(cData, cClock, LSBFIRST, B11111111);
+  digitalWrite(cLatch, HIGH);
+  digitalWrite(cLatch, LOW);
+}
+
+void clsRows() {
+  // Clear out the shift register
+  digitalWrite(rReset, LOW);
+  digitalWrite(rReset, HIGH);
+}
+
+
 void setup() {
   // Set everything to output
   pinMode(rData, OUTPUT);
@@ -148,6 +163,8 @@ void setup() {
   for (int i = 0; i < (24 * 3); i++)
     image[i] = ~test_pattern[i];
 
+  clsRows();
+  clsCols();
 }
 
 byte miniImage[8] = {
@@ -184,7 +201,30 @@ B11111110,
 };
 
 void loop() {
-  
+ 
+/*
+    for (int r = 0; r < 24; r++) {
+      for (int c = 0; c < 24; c++) {
+        digitalWrite(cData, (c == 0) ? LOW : HIGH);
+        digitalWrite(cClock, HIGH);
+        digitalWrite(cClock, LOW);
+        digitalWrite(cLatch, HIGH);
+        digitalWrite(cLatch, LOW);
+        
+        delay(5);
+      }
+      
+      digitalWrite(rData, (r == 0) ? HIGH : LOW);
+      digitalWrite(rClock, HIGH);
+      digitalWrite(rClock, LOW);
+      digitalWrite(rLatch, HIGH);
+      digitalWrite(rLatch, LOW);
+    }
+    
+    delay(50);
+*/    
+    
+/*  
     for (int i = 0; i < 64; i++) {
     
     // take the latchPin low so 
@@ -201,32 +241,36 @@ void loop() {
     digitalWrite(cLatch, HIGH);
     
     // pause before next value
-    delay(100);
+    delay(50);
   }
-
-/*  delay(0);
+*/
   
   // Set columns
-  for (int r = 0; r < 3; r++) {
+  clsRows();
+  for (int r = 0; r < 8; r++) {
+    clsCols();
     byte row = B10000000 >> r;
     
     // The Column
+    digitalWrite(cEnable, HIGH);
     shiftOut(cData, cClock, LSBFIRST, miniImage[r]);
     digitalWrite(cLatch, LOW);
     digitalWrite(cLatch, HIGH);
+    digitalWrite(cEnable, LOW);
     
     // The row
+    digitalWrite(rEnable, HIGH);
     shiftOut(rData, rClock, LSBFIRST, row);  
     digitalWrite(rLatch, LOW);
     digitalWrite(rLatch, HIGH);
+    digitalWrite(rEnable, LOW);
   }
   // Turn off
-  shiftOut(cData, cClock, LSBFIRST, B11111111);
-  digitalWrite(cLatch, LOW);
-  digitalWrite(cLatch, HIGH);
+  clsCols();
+  clsRows();
+  delay(0);
   
   
-/*  
 /*  // Put up the image
   for (int r = 0; r < 24; r++) {
    
