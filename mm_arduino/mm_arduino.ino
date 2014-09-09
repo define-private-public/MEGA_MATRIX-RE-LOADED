@@ -24,6 +24,14 @@
 // 0 = LOW
 // 1 = HIGH
 
+
+#define bit_get(p,m) ((p) & (m))
+#define bit_set(p,m) ((p) |= (m))
+#define bit_clear(p,m) ((p) &= ~(m))
+#define bit_flip(p,m) ((p) ^= (m))
+#define bit_write(c,p,m) (c ? bit_set(p,m) : bit_clear(p,m))
+#define BIT(x) (0x01 << (x))
+
 // Row: Acts as the emmiter
 int rData = 2;
 int rClock = 3;
@@ -141,6 +149,8 @@ void clsRows() {
 
 
 void setup() {
+  Serial.begin(115200);
+  
   // Set everything to output
   pinMode(rData, OUTPUT);
   pinMode(rClock, OUTPUT);
@@ -278,25 +288,56 @@ void loop() {
   clsRows();
 //  delay(10);
   // Rows
-  for (int r = 0; r < 24; r++) {
     clsCols();
+  for (int r = 0; r < 24; r += 2) {
+    unsigned long start = micros();
+//    digitalWrite(rEnable, HIGH); 
     
     // Columns
-    digitalWrite(cEnable, HIGH);
+//    digitalWrite(cEnable, HIGH);
     for (int c = 2; c >= 0; c--)
       shiftOut(cData, cClock, LSBFIRST, image[(r * 3) + c ]);
-    digitalWrite(cLatch, LOW);
-    digitalWrite(cLatch, HIGH);
-    digitalWrite(cEnable, LOW);
+//    digitalWrite(cEnable, LOW);
   
     // the Row
-    digitalWrite(rEnable, HIGH); 
-    digitalWrite(rData, (r == 0) ? HIGH : LOW);
-    digitalWrite(rClock, HIGH);
-    digitalWrite(rClock, LOW);
+    if (r == 0) {
+      digitalWrite(rData, LOW);
+      digitalWrite(rClock, HIGH);
+      digitalWrite(rClock, LOW);
+      digitalWrite(rData, HIGH);
+      digitalWrite(rClock, HIGH);
+      digitalWrite(rClock, LOW);
+    } else if (r == 1) {
+      digitalWrite(rData, HIGH);
+      digitalWrite(rClock, HIGH);
+      digitalWrite(rClock, LOW);
+      digitalWrite(rData, LOW);
+      digitalWrite(rClock, HIGH);
+      digitalWrite(rClock, LOW);
+    } else {
+      digitalWrite(rData, LOW);
+      digitalWrite(rClock, HIGH);
+      digitalWrite(rClock, LOW);
+      digitalWrite(rData, LOW);
+      digitalWrite(rClock, HIGH);
+      digitalWrite(rClock, LOW);
+    }
+    
+    // Hold for a bit until we're ready to write again (don't change anything yet.
+    while ((micros() - start) > 550)
+      delayMicroseconds(25);
+    
+    digitalWrite(cLatch, LOW);
+    digitalWrite(cLatch, HIGH);
     digitalWrite(rLatch, LOW);
     digitalWrite(rLatch, HIGH);
-    digitalWrite(rEnable, LOW);
+//    digitalWrite(rEnable, LOW);
+//    Serial.println(micros() - start);
+//    delayMicroseconds(250);
+    
+    // for interlacting
+    if (r == 22)
+      r = -1;
   }
 //  clsCols();
 //  clsRows();
