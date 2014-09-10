@@ -324,13 +324,16 @@ void loop() {
     }
     
     // Hold for a bit until we're ready to write again (don't change anything yet.
-    while ((micros() - start) > 550)
+    while ((micros() - start) < 600) {
       delayMicroseconds(25);
+    }
+    Serial.println(micros() - start);
     
-    digitalWrite(cLatch, LOW);
-    digitalWrite(cLatch, HIGH);
+    
     digitalWrite(rLatch, LOW);
     digitalWrite(rLatch, HIGH);
+    digitalWrite(cLatch, LOW);
+    digitalWrite(cLatch, HIGH);
 //    digitalWrite(rEnable, LOW);
 //    Serial.println(micros() - start);
 //    delayMicroseconds(250);
