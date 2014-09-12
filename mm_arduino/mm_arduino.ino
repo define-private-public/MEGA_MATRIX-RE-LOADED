@@ -60,16 +60,16 @@ int cReset = 12;    // PB4
 #define R_RESET_LOW PORTD &= ~_BV(PD6)
 
 // For the Column controller
-#define C_DATA_HIGH PORTB |= _BV(PB2)
-#define C_DATA_LOW PORTB &= ~_BV(PB2)
-#define C_CLOCK_HIGH PORTB |= _BV(PB3)
-#define C_CLOCK_LOW PORTB &= ~_BV(PB3)
-#define C_LATCH_HIGH PORTB |= _BV(PB4)
-#define C_LATCH_LOW PORTB &= ~_BV(PB4)
-#define C_ENABLE_HIGH PORTB |= _BV(PB5)
-#define C_ENABLE_LOW PORTB &= ~_BV(PB5)
-#define C_RESET_HIGH PORTB |= _BV(PB6)
-#define C_RESET_LOW PORTB &= ~_BV(PB6)
+#define C_DATA_HIGH PORTB |= _BV(PB0)
+#define C_DATA_LOW PORTB &= ~_BV(PB0)
+#define C_CLOCK_HIGH PORTB |= _BV(PB1)
+#define C_CLOCK_LOW PORTB &= ~_BV(PB1)
+#define C_LATCH_HIGH PORTB |= _BV(PB2)
+#define C_LATCH_LOW PORTB &= ~_BV(PB2)
+#define C_ENABLE_HIGH PORTB |= _BV(PB3)
+#define C_ENABLE_LOW PORTB &= ~_BV(PB3)
+#define C_RESET_HIGH PORTB |= _BV(PB4)
+#define C_RESET_LOW PORTB &= ~_BV(PB4)
 
 
 
@@ -237,80 +237,7 @@ B11111101,
 B11111110,
 };
 
-void loop() {
- 
-/*
-    for (int r = 0; r < 24; r++) {
-      for (int c = 0; c < 24; c++) {
-        digitalWrite(cData, (c == 0) ? LOW : HIGH);
-        digitalWrite(cClock, HIGH);
-        digitalWrite(cClock, LOW);
-        digitalWrite(cLatch, HIGH);
-        digitalWrite(cLatch, LOW);
-        
-        delay(5);
-      }
-      
-      digitalWrite(rData, (r == 0) ? HIGH : LOW);
-      digitalWrite(rClock, HIGH);
-      digitalWrite(rClock, LOW);
-      digitalWrite(rLatch, HIGH);
-      digitalWrite(rLatch, LOW);
-    }
-    
-    delay(50);
-*/    
-    
-/*  
-    for (int i = 0; i < 64; i++) {
-    
-    // take the latchPin low so 
-    // the LEDs don't change while you're sending in bits:
-    digitalWrite(rLatch, LOW);
-    digitalWrite(cLatch, LOW);
-    
-    // shift out the bits:
-    shiftOut(rData, rClock, LSBFIRST, ledMapRow[i / 8]);  
-    shiftOut(cData, cClock, LSBFIRST, ledMapColumn[i % 8]);  
-
-    //take the latch pin high so the LEDs will light up:
-    digitalWrite(rLatch, HIGH);
-    digitalWrite(cLatch, HIGH);
-    
-    // pause before next value
-    delay(50);
-  }
-*/
-  
-  
-  
-/*
-  // Set columns
-  clsRows();
-  for (int r = 0; r < 8; r++) {
-    clsCols();
-    byte row = B10000000 >> r;
-    
-    // The Column
-    digitalWrite(cEnable, HIGH);
-    shiftOut(cData, cClock, LSBFIRST, miniImage[r]);
-    digitalWrite(cLatch, LOW);
-    digitalWrite(cLatch, HIGH);
-    digitalWrite(cEnable, LOW);
-    
-    // The row
-    digitalWrite(rEnable, HIGH);
-    shiftOut(rData, rClock, LSBFIRST, row);  
-    digitalWrite(rLatch, LOW);
-    digitalWrite(rLatch, HIGH);
-    digitalWrite(rEnable, LOW);
-  }
-  // Turn off
-  clsCols();
-  clsRows();
-  delay(0);
-*/  
-  
+void loop() {  
   // Put up the image
 //  clsRows();
 //  delay(10);
@@ -322,19 +249,26 @@ void loop() {
     
     // Columns
 //    digitalWrite(cEnable, HIGH);
-    for (int c = 2; c >= 0; c--)
-      shiftOut(cData, cClock, LSBFIRST, image[(r * 3) + c ]);
+    int row = r * 3;
+    for (int c = 2; c >= 0; c--) {
+//      shiftOut(cData, cClock, LSBFIRST, image[row + c]);
+      
+      // Do a shift out, LSB First
+      for (int b = 0; b < 8; b++) {
+        if (!!(image[row + c] & (1 << b)))
+          C_DATA_HIGH;
+        else
+          C_DATA_LOW;
+          
+        C_CLOCK_HIGH;
+        C_CLOCK_LOW;
+      }
+    }
 //    digitalWrite(cEnable, LOW);
   
     // the Row (need if block because of interlacting)
     if (r == 0) {
       // First pass, row 1 should be high, row 2 low
-      digitalWrite(rData, LOW);
-      digitalWrite(rClock, HIGH);
-      digitalWrite(rClock, LOW);
-      digitalWrite(rData, HIGH);
-      digitalWrite(rClock, HIGH);
-      digitalWrite(rClock, LOW);
       R_DATA_LOW;
       R_CLOCK_HIGH;
       R_CLOCK_LOW;
@@ -349,21 +283,9 @@ void loop() {
       R_DATA_LOW;
       R_CLOCK_HIGH;
       R_CLOCK_LOW;
-//      digitalWrite(rData, HIGH);
-//      digitalWrite(rClock, HIGH);
-//      digitalWrite(rClock, LOW);
-//      digitalWrite(rData, LOW);
-//      digitalWrite(rClock, HIGH);
-//      digitalWrite(rClock, LOW);
     } else {
       // Shift down by two
       // Everything else should be low
-//      digitalWrite(rData, LOW);
-//      digitalWrite(rClock, HIGH);
-//      digitalWrite(rClock, LOW);
-//      digitalWrite(rData, LOW);
-//      digitalWrite(rClock, HIGH);
-//      digitalWrite(rClock, LOW);
       R_DATA_LOW;
       R_CLOCK_HIGH;
       R_CLOCK_LOW;
@@ -379,18 +301,22 @@ void loop() {
     
     
     // Send te buffers to output
+//    R_LATCH_LOW;
+//    R_LATCH_HIGH;
+//    C_LATCH_LOW;
+//    C_LATCH_HIGH;
     digitalWrite(rLatch, LOW);
     digitalWrite(rLatch, HIGH);
     digitalWrite(cLatch, LOW);
     digitalWrite(cLatch, HIGH);
 //    digitalWrite(rEnable, LOW);
 //    Serial.println(micros() - start);
-//    delayMicroseconds(250);
     
     // for interlacting
     if (r == 22)
       r = -1;
   }
+  
   Serial.println(micros() - start);
 //  clsCols();
 //  clsRows();
