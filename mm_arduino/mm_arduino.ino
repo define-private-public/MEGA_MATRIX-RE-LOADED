@@ -25,13 +25,6 @@
 // 1 = HIGH
 
 
-#define bit_get(p,m) ((p) & (m))
-#define bit_set(p,m) ((p) |= (m))
-#define bit_clear(p,m) ((p) &= ~(m))
-#define bit_flip(p,m) ((p) ^= (m))
-#define bit_write(c,p,m) (c ? bit_set(p,m) : bit_clear(p,m))
-#define BIT(x) (0x01 << (x))
-
 // Row: Acts as the emmiter, all pins on port D of atmega
 int rData = 2;      // PD2
 int rClock = 3;     // PD3
@@ -46,7 +39,7 @@ int cLatch = 10;    // PB2
 int cEnable = 11;   // PB3
 int cReset = 12;    // PB4
 
-// Some handiness here
+// The need for speed:
 // For the Row controller
 #define R_DATA_HIGH PORTD |= _BV(PD2)
 #define R_DATA_LOW PORTD &= ~_BV(PD2)
@@ -71,10 +64,20 @@ int cReset = 12;    // PB4
 #define C_RESET_HIGH PORTB |= _BV(PB4)
 #define C_RESET_LOW PORTB &= ~_BV(PB4)
 
-
-
 // NOTE Could consolidate the Reset and enable pins possibly
 //      as well as the latch.  Test this later.
+
+
+byte miniImage[8] = {
+  B00000000,
+  B11111110,
+  B00000011,
+  B11111000,
+  B00001111,
+  B11100000,
+  B00111111,
+  B10000000,
+};
 
 
 // Some patterns
@@ -168,6 +171,7 @@ void clsCols() {
   digitalWrite(cLatch, LOW);
 }
 
+
 void clsRows() {
   // Clear out the shift register
   digitalWrite(rReset, LOW);
@@ -200,71 +204,37 @@ void setup() {
   for (int i = 0; i < (24 * 3); i++)
     image[i] = ~CSH_logo[i];
 
+  // Start with a clean slate
+  digitalWrite(rEnable, HIGH);
+  digitalWrite(cEnable, HIGH);
   clsRows();
   clsCols();
+  digitalWrite(cEnable, LOW);
+  digitalWrite(rEnable, LOW);
 }
 
-byte miniImage[8] = {
-  B00000000,
-  B11111110,
-  B00000011,
-  B11111000,
-  B00001111,
-  B11100000,
-  B00111111,
-  B10000000,
-};
-
-int ledMapRow[] = {
-B10000000,
-B01000000,
-B00100000,
-B00010000,
-B00001000,
-B00000100,
-B00000010,
-B00000001,
-};
-
-int ledMapColumn[] = {
-B01111111,
-B10111111,
-B11011111,
-B11101111,
-B11110111,
-B11111011,
-B11111101,
-B11111110,
-};
 
 void loop() {  
-  // Put up the image
-//  clsRows();
-//  delay(10);
-  // Rows
-//    clsCols();
   unsigned long start = micros();
+  
+  // Put up the image
   for (int r = 0; r < 24; r += 2) {
-//    digitalWrite(rEnable, HIGH); 
-    
-    // Columns
-//    digitalWrite(cEnable, HIGH);
     int row = r * 3;
-    for (int c = 2; c >= 0; c--) {
-//      shiftOut(cData, cClock, LSBFIRST, image[row + c]);
-      
+    
+    // Put up the column
+    for (int c = 2; c >= 0; c--) {      
       // Do a shift out, LSB First
       for (int b = 0; b < 8; b++) {
         if (!!(image[row + c] & (1 << b)))
           C_DATA_HIGH;
         else
           C_DATA_LOW;
-          
+        
+        // Send the bit to the shift register
         C_CLOCK_HIGH;
         C_CLOCK_LOW;
       }
     }
-//    digitalWrite(cEnable, LOW);
   
     // the Row (need if block because of interlacting)
     if (r == 0) {
@@ -294,32 +264,16 @@ void loop() {
       R_CLOCK_LOW;
     }
     
-    // Hold for a bit until we're ready to write again (don't change anything yet).
-//    while ((micros() - start) < 1000) {
-//      delayMicroseconds(25);
-//    }
+    // Send the buffers to output
+    R_LATCH_LOW;
+    R_LATCH_HIGH;
+    C_LATCH_LOW;
+    C_LATCH_HIGH;
     
-    
-    // Send te buffers to output
-//    R_LATCH_LOW;
-//    R_LATCH_HIGH;
-//    C_LATCH_LOW;
-//    C_LATCH_HIGH;
-    digitalWrite(rLatch, LOW);
-    digitalWrite(rLatch, HIGH);
-    digitalWrite(cLatch, LOW);
-    digitalWrite(cLatch, HIGH);
-//    digitalWrite(rEnable, LOW);
-//    Serial.println(micros() - start);
-    
-    // for interlacting
+    // for interlacing
     if (r == 22)
       r = -1;
   }
   
   Serial.println(micros() - start);
-//  clsCols();
-//  clsRows();
-
-//  delay(1);
 }
