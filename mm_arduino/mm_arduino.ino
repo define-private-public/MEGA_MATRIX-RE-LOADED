@@ -32,19 +32,46 @@
 #define bit_write(c,p,m) (c ? bit_set(p,m) : bit_clear(p,m))
 #define BIT(x) (0x01 << (x))
 
-// Row: Acts as the emmiter
-int rData = 2;
-int rClock = 3;
-int rLatch = 4;
-int rEnable = 5;
-int rReset = 6;
+// Row: Acts as the emmiter, all pins on port D of atmega
+int rData = 2;      // PD2
+int rClock = 3;     // PD3
+int rLatch = 4;     // PD4
+int rEnable = 5;    // PD5
+int rReset = 6;     // PD6
 
-// Colum: Acts as the Reicver
-int cData = 8;
-int cClock = 9;
-int cLatch = 10;
-int cEnable = 11;
-int cReset = 12;
+// Colunm: Acts as the Reicver, all pins on port B of atmega
+int cData = 8;      // PB0
+int cClock = 9;     // PB1
+int cLatch = 10;    // PB2
+int cEnable = 11;   // PB3
+int cReset = 12;    // PB4
+
+// Some handiness here
+// For the Row controller
+#define R_DATA_HIGH PORTD |= _BV(PD2)
+#define R_DATA_LOW PORTD &= ~_BV(PD2)
+#define R_CLOCK_HIGH PORTD |= _BV(PD3)
+#define R_CLOCK_LOW PORTD &= ~_BV(PD3)
+#define R_LATCH_HIGH PORTD |= _BV(PD4)
+#define R_LATCH_LOW PORTD &= ~_BV(PD4)
+#define R_ENABLE_HIGH PORTD |= _BV(PD5)
+#define R_ENABLE_LOW PORTD &= ~_BV(PD5)
+#define R_RESET_HIGH PORTD |= _BV(PD6)
+#define R_RESET_LOW PORTD &= ~_BV(PD6)
+
+// For the Column controller
+#define C_DATA_HIGH PORTB |= _BV(PB2)
+#define C_DATA_LOW PORTB &= ~_BV(PB2)
+#define C_CLOCK_HIGH PORTB |= _BV(PB3)
+#define C_CLOCK_LOW PORTB &= ~_BV(PB3)
+#define C_LATCH_HIGH PORTB |= _BV(PB4)
+#define C_LATCH_LOW PORTB &= ~_BV(PB4)
+#define C_ENABLE_HIGH PORTB |= _BV(PB5)
+#define C_ENABLE_LOW PORTB &= ~_BV(PB5)
+#define C_RESET_HIGH PORTB |= _BV(PB6)
+#define C_RESET_LOW PORTB &= ~_BV(PB6)
+
+
 
 // NOTE Could consolidate the Reset and enable pins possibly
 //      as well as the latch.  Test this later.
@@ -285,12 +312,12 @@ void loop() {
 */  
   
   // Put up the image
-  clsRows();
+//  clsRows();
 //  delay(10);
   // Rows
-    clsCols();
+//    clsCols();
+  unsigned long start = micros();
   for (int r = 0; r < 24; r += 2) {
-    unsigned long start = micros();
 //    digitalWrite(rEnable, HIGH); 
     
     // Columns
@@ -299,37 +326,59 @@ void loop() {
       shiftOut(cData, cClock, LSBFIRST, image[(r * 3) + c ]);
 //    digitalWrite(cEnable, LOW);
   
-    // the Row
+    // the Row (need if block because of interlacting)
     if (r == 0) {
+      // First pass, row 1 should be high, row 2 low
       digitalWrite(rData, LOW);
       digitalWrite(rClock, HIGH);
       digitalWrite(rClock, LOW);
       digitalWrite(rData, HIGH);
       digitalWrite(rClock, HIGH);
       digitalWrite(rClock, LOW);
+      R_DATA_LOW;
+      R_CLOCK_HIGH;
+      R_CLOCK_LOW;
+      R_DATA_HIGH;
+      R_CLOCK_HIGH;
+      R_CLOCK_LOW;
     } else if (r == 1) {
-      digitalWrite(rData, HIGH);
-      digitalWrite(rClock, HIGH);
-      digitalWrite(rClock, LOW);
-      digitalWrite(rData, LOW);
-      digitalWrite(rClock, HIGH);
-      digitalWrite(rClock, LOW);
+      // Second pass, row 1 low, row 2 high
+      R_DATA_HIGH;
+      R_CLOCK_HIGH;
+      R_CLOCK_LOW;
+      R_DATA_LOW;
+      R_CLOCK_HIGH;
+      R_CLOCK_LOW;
+//      digitalWrite(rData, HIGH);
+//      digitalWrite(rClock, HIGH);
+//      digitalWrite(rClock, LOW);
+//      digitalWrite(rData, LOW);
+//      digitalWrite(rClock, HIGH);
+//      digitalWrite(rClock, LOW);
     } else {
-      digitalWrite(rData, LOW);
-      digitalWrite(rClock, HIGH);
-      digitalWrite(rClock, LOW);
-      digitalWrite(rData, LOW);
-      digitalWrite(rClock, HIGH);
-      digitalWrite(rClock, LOW);
+      // Shift down by two
+      // Everything else should be low
+//      digitalWrite(rData, LOW);
+//      digitalWrite(rClock, HIGH);
+//      digitalWrite(rClock, LOW);
+//      digitalWrite(rData, LOW);
+//      digitalWrite(rClock, HIGH);
+//      digitalWrite(rClock, LOW);
+      R_DATA_LOW;
+      R_CLOCK_HIGH;
+      R_CLOCK_LOW;
+      R_DATA_LOW;
+      R_CLOCK_HIGH;
+      R_CLOCK_LOW;
     }
     
-    // Hold for a bit until we're ready to write again (don't change anything yet.
-    while ((micros() - start) < 600) {
-      delayMicroseconds(25);
-    }
-    Serial.println(micros() - start);
+    // Hold for a bit until we're ready to write again (don't change anything yet).
+//    while ((micros() - start) < 1000) {
+//      delayMicroseconds(25);
+//    }
     
     
+    // Send te buffers to output
     digitalWrite(rLatch, LOW);
     digitalWrite(rLatch, HIGH);
     digitalWrite(cLatch, LOW);
@@ -342,6 +391,7 @@ void loop() {
     if (r == 22)
       r = -1;
   }
+  Serial.println(micros() - start);
 //  clsCols();
 //  clsRows();
 
