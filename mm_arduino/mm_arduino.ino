@@ -216,10 +216,11 @@ void setup() {
 
 
 void loop() {  
-  unsigned long start = micros();
+//  unsigned long start = micros();
   
   // Put up the image
   for (int r = 0; r < 24; r += 2) {
+    unsigned long start = micros();
     int row = r * 3;
     
     // Put up the column
@@ -271,10 +272,20 @@ void loop() {
     C_LATCH_LOW;
     C_LATCH_HIGH;
     
+    while ((start + 150) > micros())
+      delayMicroseconds(25);
+    
     // for interlacing
     if (r == 22)
       r = -1;
   }
   
-  Serial.println(micros() - start);
+  // Last loop, shift down one set of zeores (that way the last row isn't super bright)
+  R_DATA_LOW;
+  R_CLOCK_HIGH;
+  R_CLOCK_LOW;
+  R_LATCH_LOW;
+  R_LATCH_HIGH;
+  
+//  Serial.println(micros() - start);
 }
