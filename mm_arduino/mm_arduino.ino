@@ -74,22 +74,10 @@ int cReset = 12;    // PB4
 #define NUM_BYTES 72  // 24 * 3
 #define NUM_ROWS 24
 #define NUM_COLS 24
-boolean waitingForNewImage = false;
-
-
-
-
-
-byte miniImage[8] = {
-  B00000000,
-  B11111110,
-  B00000011,
-  B11111000,
-  B00001111,
-  B11100000,
-  B00111111,
-  B10000000,
-};
+boolean bufferReady = false;
+byte bytesRead = 0;
+byte image[NUM_BYTES];           // Image that's currently being displayed
+byte image_buffer[NUM_BYTES];    // Buffer for next image
 
 
 // Some patterns
@@ -147,33 +135,6 @@ byte test_pattern[NUM_BYTES] = {
   B10101010, B10101010, B10101010,
 };
 
-// Image that will be displayed
-byte image[NUM_BYTES] = {
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-  B00000000, B00000000, B00000000,
-};
 
 
 void clsCols() {
@@ -234,6 +195,24 @@ void setup() {
 
 void loop() {  
 //  unsigned long start = micros();
+  
+  // This is not using buffered IO like it should, will figure that out later
+  byte bytesReady = Serial.available();
+  while (bytesReady > 0) {
+    // Get the next byte
+    
+    image_buffer[bytesRead] = (byte)Serial.read();
+    
+    bytesRead += 1;
+    
+    if (bytesRead == 72) {
+      // Read in a whole image, set it to display
+      memcpy(image, image_buffer, bytesRead);
+      bytesRead = 0;
+      bytesReady = 0;
+    } else
+      bytesReady = Serial.available();  // Loop again
+  }
   
   // Put up the image
   for (int r = 0; r < NUM_ROWS; r += 2) {
