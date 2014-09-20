@@ -168,15 +168,16 @@ void clsCols() {
   // Clears out all of the columns (Turns them off by setting their values to 1)
   for (int c = 0; c < 3; c++)
     shiftOut(cData, cClock, LSBFIRST, B11111111);
-  digitalWrite(cLatch, HIGH);
-  digitalWrite(cLatch, LOW);
+    
+  C_LATCH_HIGH;
+  C_LATCH_LOW;
 }
 
 
 void clsRows() {
   // Clear out the shift register
-  digitalWrite(rReset, LOW);
-  digitalWrite(rReset, HIGH);
+  C_RESET_LOW;
+  C_RESET_HIGH;
 }
 
 
@@ -196,22 +197,22 @@ void setup() {
   pinMode(cReset, OUTPUT);
   
   // Turn on output, disable reset
-  digitalWrite(rEnable, LOW);
-  digitalWrite(cEnable, LOW);
-  digitalWrite(rReset, HIGH);
-  digitalWrite(cReset, HIGH);
+  R_ENABLE_LOW;
+  C_ENABLE_LOW;
+  R_RESET_HIGH;
+  C_RESET_HIGH;
   
   // XOR the whole image (pre-process)
   for (int i = 0; i < (24 * 3); i++)
     image[i] = ~test_pattern[i];
 
   // Start with a clean slate
-  digitalWrite(rEnable, HIGH);
-  digitalWrite(cEnable, HIGH);
+  R_ENABLE_HIGH;
+  C_ENABLE_HIGH;
   clsRows();
   clsCols();
-  digitalWrite(cEnable, LOW);
-  digitalWrite(rEnable, LOW);
+  C_ENABLE_LOW;
+  R_ENABLE_LOW;
 }
 
 
@@ -272,7 +273,7 @@ void loop() {
     C_LATCH_LOW;
     C_LATCH_HIGH;
     
-    while ((start + 150) > micros())
+    while ((start + 200) > micros())
       delayMicroseconds(25);
     
     // for interlacing
