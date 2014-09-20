@@ -166,8 +166,12 @@ byte image[24 * 3] = {
 
 void clsCols() {
   // Clears out all of the columns (Turns them off by setting their values to 1)
-  for (int c = 0; c < 3; c++)
-    shiftOut(cData, cClock, LSBFIRST, B11111111);
+  C_DATA_HIGH;
+  for (int c = 0; c < 24; c++) {
+    C_CLOCK_HIGH;
+    C_CLOCK_LOW;
+  }
+  C_DATA_LOW;
     
   C_LATCH_HIGH;
   C_LATCH_LOW;
