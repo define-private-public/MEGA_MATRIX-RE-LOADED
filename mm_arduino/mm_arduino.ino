@@ -207,8 +207,8 @@ void setup() {
   C_RESET_HIGH;
   
   // XOR the whole image (pre-process)
-  for (int i = 0; i < (24 * 3); i++)
-    image[i] = ~test_pattern[i];
+//  for (int i = 0; i < (24 * 3); i++)
+//    image[i] = ~test_pattern[i];
 
   // Start with a clean slate
   R_ENABLE_HIGH;
@@ -277,20 +277,20 @@ void loop() {
     C_LATCH_LOW;
     C_LATCH_HIGH;
     
-    while ((start + 200) > micros())
-      delayMicroseconds(25);
+//    while ((start + 100) > micros())
+//      delayMicroseconds(10);
     
     // for interlacing
     if (r == 22)
       r = -1;
   }
   
-  // Last loop, shift down one set of zeores (that way the last row isn't super bright)
-  R_DATA_LOW;
-  R_CLOCK_HIGH;
-  R_CLOCK_LOW;
-  R_LATCH_LOW;
-  R_LATCH_HIGH;
+//  NOTE: This code was meant to clear out the last row, not sure if necessary or not.
+//  R_DATA_LOW;
+//  R_CLOCK_HIGH;
+//  R_CLOCK_LOW;
+//  R_LATCH_LOW;
+//  R_LATCH_HIGH;
   
 //  Serial.println(micros() - start);
 }
