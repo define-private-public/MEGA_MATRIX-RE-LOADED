@@ -68,6 +68,18 @@ int cReset = 12;    // PB4
 //      as well as the latch.  Test this later.
 
 
+
+
+
+#define NUM_BYTES 72  // 24 * 3
+#define NUM_ROWS 24
+#define NUM_COLS 24
+boolean waitingForNewImage = false;
+
+
+
+
+
 byte miniImage[8] = {
   B00000000,
   B11111110,
@@ -81,7 +93,7 @@ byte miniImage[8] = {
 
 
 // Some patterns
-byte CSH_logo[24 * 3] = {
+byte CSH_logo[NUM_BYTES] = {
    B00000000, B00000000, B00000000,
    B00111111, B11111111, B10011110,
    B01111111, B11111111, B11011110,
@@ -108,7 +120,7 @@ byte CSH_logo[24 * 3] = {
    B00000000, B00000000, B00000000,
 };
 
-byte test_pattern[24 * 3] = {
+byte test_pattern[NUM_BYTES] = {
   B01010101, B01010101, B01010101,
   B10101010, B10101010, B10101010,
   B01010101, B01010101, B01010101,
@@ -136,7 +148,7 @@ byte test_pattern[24 * 3] = {
 };
 
 // Image that will be displayed
-byte image[24 * 3] = {
+byte image[NUM_BYTES] = {
   B00000000, B00000000, B00000000,
   B00000000, B00000000, B00000000,
   B00000000, B00000000, B00000000,
@@ -167,7 +179,7 @@ byte image[24 * 3] = {
 void clsCols() {
   // Clears out all of the columns (Turns them off by setting their values to 1)
   C_DATA_HIGH;
-  for (int c = 0; c < 24; c++) {
+  for (int c = 0; c < NUM_COLS; c++) {
     C_CLOCK_HIGH;
     C_CLOCK_LOW;
   }
@@ -224,7 +236,7 @@ void loop() {
 //  unsigned long start = micros();
   
   // Put up the image
-  for (int r = 0; r < 24; r += 2) {
+  for (int r = 0; r < NUM_ROWS; r += 2) {
     unsigned long start = micros();
     int row = r * 3;
     
@@ -282,7 +294,7 @@ void loop() {
 //      delayMicroseconds(10);
     
     // for interlacing
-    if (r == 22)
+    if (r == (NUM_ROWS - 2))
       r = -1;
   }
   
