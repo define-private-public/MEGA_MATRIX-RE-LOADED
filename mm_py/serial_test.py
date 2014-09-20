@@ -6,45 +6,35 @@
 import sys, time
 import serial
 
-if len(sys.argv) < 2:
+if len(sys.argv) < 3:
     exit(1)
 
 ser = serial.Serial(sys.argv[1], 115200, timeout=1)
 
-# current HIGH bit
-row = 0
-col = 0
 
-# Loop forever
-while True:
+# Open up a file and send it to the matrix
+f = open(sys.argv[2], 'r')
+b = 0
 
-    r = 0
-    while r < 24:
+time.sleep(2)
 
-        c = 0
-        while c < 3:
+for line in f:
+    line = line.strip('\r\n')
+    c1 = line[:8]
+    c2 = line[8:16]
+    c3 = line[16:]
 
-#            if (r == row) and ((col // 8) == c):
-#                byte = 0b10000000 >> (col % 8)
-#                ser.write('%c'%byte)
-            if (r == 0) and (c == 0):
-                ser.write('%c'%0b10100000)
-            else:
-                ser.write('\x00')
+#    print('%c'%int(c1, 2))
+#    print('%c'%int(c2, 2))
+#    print('%c'%int(c3, 2))
 
-            print('r:%i, c:%i'%(r, c))
-            c += 1
+    ser.write('%c'%int(c1, 2))
+    ser.write('%c'%int(c2, 2))
+    ser.write('%c'%int(c3, 2))
+#    ser.write('%c'%0b10100011)
+#    ser.write('%c'%0b10100011)
+#    ser.write('%c'%0b10100011)
+#    ser.write('a' * 3)
 
-        r += 1
 
-
-    # Move it back down
-    col += 1
-
-    if col == 24:
-        col = 0
-        row += 1
-
-        if row == 24:
-            row = 0
-            print('Cycle Done!')
+ser.close()
