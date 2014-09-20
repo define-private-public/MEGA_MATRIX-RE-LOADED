@@ -17,19 +17,25 @@ col = 0
 
 # Loop forever
 while True:
-    c = 0
-    r = 0
 
+    r = 0
     while r < 24:
+
+        c = 0
         while c < 3:
 
-            if (r == row) and ((col // 8) == c):
-                byte = 0b10000000 >> (col % 8)
-                ser.write('%c'%byte)
+#            if (r == row) and ((col // 8) == c):
+#                byte = 0b10000000 >> (col % 8)
+#                ser.write('%c'%byte)
+            if (r == 0) and (c == 0):
+                ser.write('%c'%0b10100000)
+            else:
+                ser.write('\x00')
 
+            print('r:%i, c:%i'%(r, c))
             c += 1
 
-        r += 1;
+        r += 1
 
 
     # Move it back down
@@ -41,3 +47,4 @@ while True:
 
         if row == 24:
             row = 0
+            print('Cycle Done!')
