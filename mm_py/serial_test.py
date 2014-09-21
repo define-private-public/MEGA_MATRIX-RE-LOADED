@@ -27,28 +27,35 @@ signal.signal(signal.SIGINT, shutdown)
 
 
 # Open up a file and send it to the matrix
-f = open(sys.argv[2], 'r')
-b = 0
+files = [None, None, None, None]
+files[0] = open('csh_logo/1.txt', 'r')
+files[1] = open('csh_logo/2.txt', 'r')
+files[2] = open('csh_logo/3.txt', 'r')
+files[3] = open('csh_logo/4.txt', 'r')
+i = 0
 
 time.sleep(2)
 
-for line in f:
-    line = line.strip('\r\n')
-    c1 = line[:8]
-    c2 = line[8:16]
-    c3 = line[16:]
+# Infinite loop:
+while True:
 
-#    print('%c'%int(c1, 2))
-#    print('%c'%int(c2, 2))
-#    print('%c'%int(c3, 2))
+    if i == 4:
+        i = 0
+   
+    # Spit out the stuff for the file
+    files[i].seek(0)
+    for line in files[i]:
+        line = line.strip('\r\n')
+        c1 = line[:8]
+        c2 = line[8:16]
+        c3 = line[16:]
+    
+        ser.write('%c'%int(c1, 2))
+        ser.write('%c'%int(c2, 2))
+        ser.write('%c'%int(c3, 2))
 
-    ser.write('%c'%int(c1, 2))
-    ser.write('%c'%int(c2, 2))
-    ser.write('%c'%int(c3, 2))
-#    ser.write('%c'%0b10100011)
-#    ser.write('%c'%0b10100011)
-#    ser.write('%c'%0b10100011)
-#    ser.write('a' * 3)
+    time.sleep(100.0 / 1000.0)
+    i += 1
 
 
 shutdown()
