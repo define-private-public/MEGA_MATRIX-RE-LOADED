@@ -63,13 +63,24 @@ def main():
         imageFiles[i] = imageFiles[i].strip(' \n\r')
         imageFiles[i] = os.path.join(seqDir, imageFiles[i])
 
+    # Check for start of loop
+    if seqFile.readline().strip(' \n\r') != 'start':
+        print('Error, no start given')
+        sys.exit(1)
 
     # And now create the animation strucutre
-    for line in seqFile:
+    line = seqFile.readline().strip(' \n\r')
+    while line != 'loop':
         print(line)
+
+        # Keep looing through until we rea
+        line = seqFile.readline().strip(' \n\r')
+
+    seqFile.close()
 
 
     print(imageFiles)
+
      
 
 
