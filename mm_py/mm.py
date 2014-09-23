@@ -72,9 +72,9 @@ def main():
     print('Running Animation...')
     print('Press ^C to stop at any time.')
 
-    # TODO check for arguments
+    # We assume everyhing is A-okay here!
     port = sys.argv[1]
-    seqFilename = 'csh_logo/animation.txt'
+    seqFilename = sys.argv[2]
     seqDir = os.path.abspath(os.path.dirname(seqFilename))
 
 
@@ -163,6 +163,10 @@ def main():
      
 
 # Main program
+if len(sys.argv) < 3:
+    print('Please provide a serial device and a sequence file')
+    sys.exit(0)
+
 signal.signal(signal.SIGINT, shutdown)
 startup()
 main()
