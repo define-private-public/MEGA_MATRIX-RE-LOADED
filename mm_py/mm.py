@@ -32,12 +32,14 @@ class Frame:
     # Basic class for a Frame to be displayed
 
     __slots__ = (
+        'fid',          # File ID (i.e. the name
         'data',         # Strings of (text) ones and zeros, can also be some newlines, just a dump of a file
         'delay',        # Delay value in milliseconds
         'nextFrame',    # Pointer to next frame
     )
 
-    def __init__(self, data, delay):
+    def __init__(self, fid, data, delay):
+        self.fid = fid
         self.data = data
         self.delay = delay
         self.nextFrame = None
@@ -53,8 +55,10 @@ def main():
     seqFilename = 'csh_logo/animation.txt'
     seqDir = os.path.abspath(os.path.dirname(seqFilename))
 
+
     # Read in the image file
     seqFile = open(seqFilename, 'r')
+
 
     # Get the image files
     imageFiles = seqFile.readline()[7:]
@@ -63,23 +67,71 @@ def main():
         imageFiles[i] = imageFiles[i].strip(' \n\r')
         imageFiles[i] = os.path.join(seqDir, imageFiles[i])
 
+
+    # Read in each of the files, then get their data, and put it into a dict
+    frameData = {}
+    for imgFile in imageFiles:
+        # Open a file and create a buffer
+        f = open(imgFile, 'r')
+        data = ''
+        
+        # Convert that data to a 72 byte thingy
+        for line in f:
+            line = line.strip(' \n\r')
+            
+            b1 = line[:8]
+            b2 = line[8:16]
+            b3 = line[16:]
+            data += '%c'%int(b1, 2)
+            data += '%c'%int(b2, 2)
+            data += '%c'%int(b3, 2)
+
+        # Cleanup
+        frameData[os.path.basename(imgFile)] = data
+        f.close()
+
+
     # Check for start of loop
     if seqFile.readline().strip(' \n\r') != 'start':
         print('Error, no start given')
         sys.exit(1)
 
+
+    # Make the first one
+    line = seqFile.readline().strip(' \n\r')
+    params = line.split(':')
+    imgFile = params[0]         # String ID
+    delay = float(params[1])    # delay value (integer)
+
+    cur = Frame(imgFile, frameData[imgFile], delay / 1000.0)
+    head = cur
+
+
     # And now create the animation strucutre
     line = seqFile.readline().strip(' \n\r')
     while line != 'loop':
-        print(line)
+        # Assume that it's of the format `[file]:[delay]`
+        params = line.split(':')
+        imgFile = params[0]         # String ID
+        delay = float(params[1])    # delay value (integer)
+
+        newFrame = Frame(imgFile, frameData[imgFile], delay / 1000.0)
+        cur.nextFrame = newFrame
+        cur = newFrame
 
         # Keep looing through until we rea
         line = seqFile.readline().strip(' \n\r')
 
+
+    # All done, point the tail to the head for a nice loop
+    cur.nextFrame = head
+
+
+
+    # Cleanup
     seqFile.close()
 
 
-    print(imageFiles)
 
      
 
