@@ -51,6 +51,7 @@ def main():
     # TODO check for arguments
     port = sys.argv[1]
     seqFilename = 'csh_logo/animation.txt'
+    seqDir = os.path.abspath(os.path.dirname(seqFilename))
 
     # Read in the image file
     seqFile = open(seqFilename, 'r')
@@ -60,6 +61,15 @@ def main():
     imageFiles = imageFiles.split(',')
     for i in range(len(imageFiles)):
         imageFiles[i] = imageFiles[i].strip(' \n\r')
+        imageFiles[i] = os.path.join(seqDir, imageFiles[i])
+
+
+    # And now create the animation strucutre
+    for line in seqFile:
+        print(line)
+
+
+    print(imageFiles)
      
 
 
