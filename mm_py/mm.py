@@ -43,5 +43,28 @@ class Frame:
         self.nextFrame = None
 
 
+def main():
+    # Main routine for program
+    print('Running Animation...')
+    print('Press ^C to stop at any time.')
+
+    # TODO check for arguments
+    port = sys.argv[1]
+    seqFilename = 'csh_logo/animation.txt'
+
+    # Read in the image file
+    seqFile = open(seqFilename, 'r')
+
+    # Get the image files
+    imageFiles = seqFile.readline()[7:]
+    imageFiles = imageFiles.split(',')
+    for i in range(len(imageFiles)):
+        imageFiles[i] = imageFiles[i].strip(' \n\r')
+     
+
+
+main()
+
+
 
 
