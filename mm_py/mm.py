@@ -28,6 +28,10 @@ import sys, os, signal, time
 import serial
 
 
+# Globals
+ser = None
+
+
 class Frame:
     # Basic class for a Frame to be displayed
 
@@ -43,6 +47,24 @@ class Frame:
         self.data = data
         self.delay = delay
         self.nextFrame = None
+
+
+def startup():
+    global ser
+
+    ser = serial.Serial(sys.argv[1], 115200, timeout=1)
+    time.sleep(2)
+    ser.flush()
+
+
+def shutdown(signal=None, frame=None):
+    # Use this to shutdown the serial applicaiton
+    global ser
+
+    time.sleep(1)
+    ser.flush()
+    ser.close()
+    sys.exit(0)
 
 
 def main():
@@ -126,17 +148,25 @@ def main():
     # All done, point the tail to the head for a nice loop
     cur.nextFrame = head
 
-
-
     # Cleanup
     seqFile.close()
 
 
+    # Now loop through the animation
+    cur = head
+    while True:
+        print('Displaying: %s'%cur.fid)
+        ser.write(cur.data)
+        time.sleep(cur.delay)
+        cur = cur.nextFrame
 
      
 
-
+# Main program
+signal.signal(signal.SIGINT, shutdown)
+startup()
 main()
+shutdown()
 
 
 
