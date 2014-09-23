@@ -1,8 +1,7 @@
 frames: 1.txt, 2.txt, 3.txt, 4.txt
-
 start
-1.txt: 50
-2.txt: 50
-3.txt: 50
-4.txt: 50
+1.txt:50
+2.txt:50
+3.txt:50
+4.txt:50
 loop
