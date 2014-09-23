@@ -10,6 +10,7 @@ if len(sys.argv) < 3:
     exit(1)
 
 ser = serial.Serial(sys.argv[1], 115200, timeout=1)
+ser.flush()
 
 
 def shutdown(signal=None, frame=None):
@@ -18,6 +19,7 @@ def shutdown(signal=None, frame=None):
     dir(ser)
 
     time.sleep(1)
+    ser.flush()
     ser.close()
     sys.exit(0)
 
