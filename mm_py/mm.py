@@ -2,10 +2,16 @@
 
 # Using the PySerial package, this will read in a text file that will play an animaiton on the
 # MEGA_MATRIX hardware device
-
+#
+# Usage:
+#   python3 mm.py <serial_port> <folder>/animation.txt
+#
+# Example
+#   python3 mm.py /dev/ttyACM0 banner/animation.txt
+#
 # An "image," is a 24x24 text file that contains only 1's and 0's.  A 1 means to turn the LED on,
 # and 0 means to turn it off.  Behaviour is undefined if you do anything else. 
-
+#
 # The language is as follows
 #
 # frames: [0], [1], [2], ... [n]
