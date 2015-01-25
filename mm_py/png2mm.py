@@ -84,14 +84,14 @@ def main():
 	# Write the animation file
 	animFile = open('%s/animation.txt'%dest, 'w')
 	animFile.write('frames: 1.txt')
-	for i in range(2, col + 1):
+	for i in range(2, col):
 		animFile.write(', %i.txt'%i)
 	animFile.write('\n')
 	
 	# Write the sequence
 	ms = int(seconds * 1000) // col
 	animFile.write('start\n')
-	for i in range(1, col + 1):
+	for i in range(1, col):
 			animFile.write('%i.txt:%i\n'%(i, ms))
 	animFile.write('loop')
 	
