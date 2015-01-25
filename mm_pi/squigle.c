@@ -6,7 +6,7 @@
 
 
 #define BCM2708_PERI_BASE   0x20000000
-#define GPIO_BASE           (BCM2708_PERI_BASE + 0x2000000) /* GPIO Controler */
+#define GPIO_BASE           (BCM2708_PERI_BASE + 0x200000) /* GPIO Controler */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,6 +32,9 @@ volatile unsigned *gpio;
 #define GPIO_CLR *(gpio + 10)	// clears bits which are 1, ignore those are 0
 
 #define GET_GPIO(g) (*(gpio + 13) & (1 << g))	// 0 if LOW, (1 << g) if HIGH
+
+#define GPIO_PULL *(gpio + 37) 		// Pull up/pull down
+#define GPIO_PULLCLK0 *(gpio + 38) 	// Pull up/pull down clock
 
 
 // Function prototypes
