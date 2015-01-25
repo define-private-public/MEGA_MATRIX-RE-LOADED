@@ -60,16 +60,16 @@ def main():
 
 	# Read the stuff into text files
 	col = 1
+	blackPixel = qRgb(0x00, 0x00, 0x00)
 	while ((col -  1) + size) <= width:
 		textFile = open('%s/%i.txt'%(dest, col), 'w')
-		print(textFile.name)
 
 		# read pixels
 		for r in range(0, size):
-			for c in range(col - 1, size):
+			for c in range(col - 1, (col - 1) +size):
 				# inspect pixel
 				pixel = png.pixel(c, r)
-				if pixel == Qt.black:
+				if pixel == blackPixel:
 					textFile.write('0')
 				else:
 					textFile.write('1')
@@ -85,7 +85,7 @@ def main():
 	animFile = open('%s/animation.txt'%dest, 'w')
 	animFile.write('frames: 1.txt')
 	for i in range(2, col + 1):
-		animFile.write(', %i.txt')
+		animFile.write(', %i.txt'%i)
 	animFile.write('\n')
 	
 	# Write the sequence
@@ -96,7 +96,7 @@ def main():
 	animFile.write('loop')
 	
 	# Finish up
-	anim.close()
+	animFile.close()
 
 
 main()
