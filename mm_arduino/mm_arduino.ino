@@ -266,10 +266,16 @@ void loop() {
 //    unsigned long start = micros();
     
     // Send the buffers to output
+    R_ENABLE_HIGH;
+    C_ENABLE_HIGH;
+    
     R_LATCH_LOW;
     R_LATCH_HIGH;
     C_LATCH_LOW;
     C_LATCH_HIGH;
+    
+    C_ENABLE_LOW;
+    R_ENABLE_LOW;
     
 //    while ((start + 100) > micros())
 //      delayMicroseconds(10);
