@@ -216,7 +216,7 @@ void loop() {
   
   // Put up the image
   for (int r = 0; r < NUM_ROWS; r += 2) {
-    unsigned long start = micros();
+//    unsigned long start = micros();
     int row = r * 3;
     
     // Put up the column
@@ -234,7 +234,7 @@ void loop() {
         C_CLOCK_LOW;
       }
     }
-  
+    
     // the Row (need if block because of interlacting)
     if (r == 0) {
       // First pass, row 1 should be high, row 2 low
@@ -262,6 +262,8 @@ void loop() {
       R_CLOCK_HIGH;
       R_CLOCK_LOW;
     }
+    
+//    unsigned long start = micros();
     
     // Send the buffers to output
     R_LATCH_LOW;
