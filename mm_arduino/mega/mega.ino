@@ -179,9 +179,9 @@ void setup() {
   R_RESET_HIGH;
   C_RESET_HIGH;
   
-//  // XOR the whole image (pre-process)
-//  for (int i = 0; i < (24 * 3); i++)
-//    image[i] = test_pattern[i];
+  // XOR the whole image (pre-process)
+  for (int i = 0; i < (24 * 3); i++)
+    image[i] = test_pattern[i];
 
   // Start with a clean slate
   R_ENABLE_HIGH;
@@ -197,22 +197,22 @@ void loop() {
 //  unsigned long start = micros();
   
   // This is not using buffered IO like it should, will figure that out later
-  byte bytesReady = Serial.available();
-  while (bytesReady > 0) {
-    // Get the next byte
-    
-    image_buffer[bytesRead] = (byte)Serial.read();
-    
-    bytesRead += 1;
-    
-    if (bytesRead == 72) {
-      // Read in a whole image, set it to display
-      memcpy(image, image_buffer, bytesRead);
-      bytesRead = 0;
-      bytesReady = 0;
-    } else
-      bytesReady = Serial.available();  // Loop again
-  }
+//  byte bytesReady = Serial.available();
+//  while (bytesReady > 0) {
+//    // Get the next byte
+//    
+//    image_buffer[bytesRead] = (byte)Serial.read();
+//    
+//    bytesRead += 1;
+//    
+//    if (bytesRead == 72) {
+//      // Read in a whole image, set it to display
+//      memcpy(image, image_buffer, bytesRead);
+//      bytesRead = 0;
+//      bytesReady = 0;
+//    } else
+//      bytesReady = Serial.available();  // Loop again
+//  }
   
   // Put up the image
   for (int r = 0; r < NUM_ROWS; r += 2) {
