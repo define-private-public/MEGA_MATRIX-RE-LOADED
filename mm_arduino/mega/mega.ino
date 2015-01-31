@@ -41,22 +41,22 @@ int cReset = 12;    // PB6
 
 // The need for speed:
 // For the Row controller
-#define R_DATA_HIGH PORTD |= _BV(PE4)
-#define R_DATA_LOW PORTD &= ~_BV(PE4)
-#define R_CLOCK_HIGH PORTD |= _BV(PE5)
-#define R_CLOCK_LOW PORTD &= ~_BV(PE5)
-#define R_LATCH_HIGH PORTD |= _BV(PG5)
-#define R_LATCH_LOW PORTD &= ~_BV(PG5)
-#define R_ENABLE_HIGH PORTD |= _BV(PE3)
-#define R_ENABLE_LOW PORTD &= ~_BV(PE3)
-#define R_RESET_HIGH PORTD |= _BV(PH3)
-#define R_RESET_LOW PORTD &= ~_BV(PH3)
+#define R_DATA_HIGH PORTE |= _BV(PE4)
+#define R_DATA_LOW PORTE &= ~_BV(PE4)
+#define R_CLOCK_HIGH PORTE |= _BV(PE5)
+#define R_CLOCK_LOW PORTE &= ~_BV(PE5)
+#define R_LATCH_HIGH PORTG |= _BV(PG5)
+#define R_LATCH_LOW PORTG &= ~_BV(PG5)
+#define R_ENABLE_HIGH PORTE |= _BV(PE3)
+#define R_ENABLE_LOW PORTE &= ~_BV(PE3)
+#define R_RESET_HIGH PORTH |= _BV(PH3)
+#define R_RESET_LOW PORTH &= ~_BV(PH3)
 
 // For the Column controller
-#define C_DATA_HIGH PORTB |= _BV(PH5)
-#define C_DATA_LOW PORTB &= ~_BV(PH5)
-#define C_CLOCK_HIGH PORTB |= _BV(PH6)
-#define C_CLOCK_LOW PORTB &= ~_BV(PH6)
+#define C_DATA_HIGH PORTH |= _BV(PH5)
+#define C_DATA_LOW PORTH &= ~_BV(PH5)
+#define C_CLOCK_HIGH PORTH |= _BV(PH6)
+#define C_CLOCK_LOW PORTH &= ~_BV(PH6)
 #define C_LATCH_HIGH PORTB |= _BV(PB4)
 #define C_LATCH_LOW PORTB &= ~_BV(PB4)
 #define C_ENABLE_HIGH PORTB |= _BV(PB5)
@@ -179,9 +179,9 @@ void setup() {
   R_RESET_HIGH;
   C_RESET_HIGH;
   
-  // XOR the whole image (pre-process)
-  for (int i = 0; i < (24 * 3); i++)
-    image[i] = test_pattern[i];
+//  // XOR the whole image (pre-process)
+//  for (int i = 0; i < (24 * 3); i++)
+//    image[i] = test_pattern[i];
 
   // Start with a clean slate
   R_ENABLE_HIGH;
@@ -197,22 +197,22 @@ void loop() {
 //  unsigned long start = micros();
   
   // This is not using buffered IO like it should, will figure that out later
-//  byte bytesReady = Serial.available();
-//  while (bytesReady > 0) {
-//    // Get the next byte
-//    
-//    image_buffer[bytesRead] = (byte)Serial.read();
-//    
-//    bytesRead += 1;
-//    
-//    if (bytesRead == 72) {
-//      // Read in a whole image, set it to display
-//      memcpy(image, image_buffer, bytesRead);
-//      bytesRead = 0;
-//      bytesReady = 0;
-//    } else
-//      bytesReady = Serial.available();  // Loop again
-//  }
+  byte bytesReady = Serial.available();
+  while (bytesReady > 0) {
+    // Get the next byte
+    
+    image_buffer[bytesRead] = (byte)Serial.read();
+    
+    bytesRead += 1;
+    
+    if (bytesRead == 72) {
+      // Read in a whole image, set it to display
+      memcpy(image, image_buffer, bytesRead);
+      bytesRead = 0;
+      bytesReady = 0;
+    } else
+      bytesReady = Serial.available();  // Loop again
+  }
   
   // Put up the image
   for (int r = 0; r < NUM_ROWS; r += 2) {
