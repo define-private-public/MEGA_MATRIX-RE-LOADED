@@ -162,14 +162,6 @@ unsigned char test_pattern[NUM_BYTES] = {
 	'z', 'z', 'z',
 	'z', 'z', 'z',
 	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
 	'z', 'z', 'z'
 };
 
