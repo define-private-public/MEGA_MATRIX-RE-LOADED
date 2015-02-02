@@ -26,6 +26,10 @@
 // 0 = LOW
 // 1 = HIGH
 
+#include <stdio.h>
+#include <unistd.h>
+#include <wiringPi.h>
+
 #define bool unsigned char
 #define true 1
 #define false 0
@@ -47,28 +51,28 @@ int cReset = 5;
 
 // The need for speed:
 // For the Row controller
-#define R_DATA_HIGH digitalWrite(rData, HIGH)
-#define R_DATA_LOW digitalWrite(rData, LOW)
-#define R_CLOCK_HIGH digitalWrite(rClock, HIGH)
-#define R_CLOCK_LOW digitalWrite(rClock, LOW)
-#define R_LATCH_HIGH digitalWrite(rLatch, HIGH)
-#define R_LATCH_LOW digitalWrite(rLatch, LOW)
-#define R_ENABLE_HIGH digitalWrite(rEnable, HIGH)
-#define R_ENABLE_LOW digitalWrite(rEnable, LOW)
-#define R_RESET_HIGH digitalWrite(rReset, HIGH)
-#define R_RESET_LOW digitalWrite(rReset, LOW)
+#define R_DATA_HIGH digitalWrite(rData, 1)
+#define R_DATA_LOW digitalWrite(rData, 0)
+#define R_CLOCK_HIGH digitalWrite(rClock, 1)
+#define R_CLOCK_LOW digitalWrite(rClock, 0)
+#define R_LATCH_HIGH digitalWrite(rLatch, 1)
+#define R_LATCH_LOW digitalWrite(rLatch, 0)
+#define R_ENABLE_HIGH digitalWrite(rEnable, 1)
+#define R_ENABLE_LOW digitalWrite(rEnable, 0)
+#define R_RESET_HIGH digitalWrite(rReset, 1)
+#define R_RESET_LOW digitalWrite(rReset, 0)
 
 // For the Column controller
-#define C_DATA_HIGH digitalWrite(cData, HIGH)
-#define C_DATA_LOW digitalWrite(cData, LOW)
-#define C_CLOCK_HIGH digitalWrite(cClock, HIGH)
-#define C_CLOCK_LOW digitalWrite(cClock, LOW)
-#define C_LATCH_HIGH digitalWrite(cLatch, HIGH)
-#define C_LATCH_LOW digitalWrite(cLatch, LOW)
-#define C_ENABLE_HIGH digitalWrite(cEnable, HIGH)
-#define C_ENABLE_LOW digitalWrite(cEnable, LOW)
-#define C_RESET_HIGH digitalWrite(cReset, HIGH)
-#define C_RESET_LOW digitalWrite(cReset, LOW)
+#define C_DATA_HIGH digitalWrite(cData, 1)
+#define C_DATA_LOW digitalWrite(cData, 0)
+#define C_CLOCK_HIGH digitalWrite(cClock, 1)
+#define C_CLOCK_LOW digitalWrite(cClock, 0)
+#define C_LATCH_HIGH digitalWrite(cLatch, 1)
+#define C_LATCH_LOW digitalWrite(cLatch, 0)
+#define C_ENABLE_HIGH digitalWrite(cEnable, 1)
+#define C_ENABLE_LOW digitalWrite(cEnable, 0)
+#define C_RESET_HIGH digitalWrite(cReset, 1)
+#define C_RESET_LOW digitalWrite(cReset, 0)
 
 // NOTE Could consolidate the Reset and enable pins possibly
 //      as well as the latch.  Test this later.
@@ -139,30 +143,30 @@ unsigned char test_pattern[NUM_BYTES] = {
 //  B10101010, B10101010, B10101010,
 //  B01010101, B01010101, B01010101,
 //  B10101010, B10101010, B10101010,
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z',
-	'z', 'z', 'z'
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y',
+	'y', 'y', 'y'
 };
 
 
@@ -295,18 +299,24 @@ void loop() {
     
 //    while ((start + 100) > micros())
 //      delayMicroseconds(10);
+
     
     // for interlacing
     if (r == (NUM_ROWS - 2))
       r = -1;
+
+	
+	delay(1);
   }
   
 //  NOTE: This code was meant to clear out the last row, not sure if necessary or not.
-//  R_DATA_LOW;
-//  R_CLOCK_HIGH;
-//  R_CLOCK_LOW;
-//  R_LATCH_LOW;
-//  R_LATCH_HIGH;
+  R_DATA_LOW;
+  R_CLOCK_HIGH;
+  R_CLOCK_LOW;
+  R_LATCH_LOW;
+  R_LATCH_HIGH;
+
+  delay(1);
 }
 
 
@@ -320,6 +330,10 @@ int main(int argc, char *argv[]) {
 		loop();
 		delay(1000);
 	}
+
+	clsCols();
+	clsRows();
+	delay(50);
 
 	return 0;
 }
