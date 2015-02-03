@@ -153,8 +153,8 @@ void clsCols() {
 
 void clsRows() {
   // Clear out the shift register
-  C_RESET_LOW;
-  C_RESET_HIGH;
+  R_RESET_LOW;
+  R_RESET_HIGH;
 }
 
 
