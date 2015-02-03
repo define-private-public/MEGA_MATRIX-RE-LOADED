@@ -78,28 +78,28 @@ int pins[10];
 
 // The need for speed:
 // For the Row controller
-#define R_DATA_HIGH digitalWrite(rData, 1)
-#define R_DATA_LOW digitalWrite(rData, 0)
-#define R_CLOCK_HIGH digitalWrite(rClock, 1)
-#define R_CLOCK_LOW digitalWrite(rClock, 0)
-#define R_LATCH_HIGH digitalWrite(rLatch, 1)
-#define R_LATCH_LOW digitalWrite(rLatch, 0)
-#define R_ENABLE_HIGH digitalWrite(rEnable, 1)
-#define R_ENABLE_LOW digitalWrite(rEnable, 0)
-#define R_RESET_HIGH digitalWrite(rReset, 1)
-#define R_RESET_LOW digitalWrite(rReset, 0)
+#define R_DATA_HIGH GPIO_SET = 1 << rData
+#define R_DATA_LOW GPIO_CLR = 1 << rData
+#define R_CLOCK_HIGH GPIO_SET = 1 << rClock
+#define R_CLOCK_LOW GPIO_CLR = 1 << rClock
+#define R_LATCH_HIGH GPIO_SET = 1 << rLatch
+#define R_LATCH_LOW GPIO_CLR = 1 << rLatch 
+#define R_ENABLE_HIGH GPIO_SET = 1 << rEnable
+#define R_ENABLE_LOW GPIO_CLR = 1 << rEnable
+#define R_RESET_HIGH GPIO_SET = 1 << rReset
+#define R_RESET_LOW GPIO_CLR = 1 << rReset
 
 // For the Column controller
-#define C_DATA_HIGH digitalWrite(cData, 1)
-#define C_DATA_LOW digitalWrite(cData, 0)
-#define C_CLOCK_HIGH digitalWrite(cClock, 1)
-#define C_CLOCK_LOW digitalWrite(cClock, 0)
-#define C_LATCH_HIGH digitalWrite(cLatch, 1)
-#define C_LATCH_LOW digitalWrite(cLatch, 0)
-#define C_ENABLE_HIGH digitalWrite(cEnable, 1)
-#define C_ENABLE_LOW digitalWrite(cEnable, 0)
-#define C_RESET_HIGH digitalWrite(cReset, 1)
-#define C_RESET_LOW digitalWrite(cReset, 0)
+#define C_DATA_HIGH GPIO_SET = 1 << cData
+#define C_DATA_LOW GPIO_CLR = 1 << cData
+#define C_CLOCK_HIGH GPIO_SET = 1 << cClock
+#define C_CLOCK_LOW GPIO_CLR = 1 << cClock
+#define C_LATCH_HIGH GPIO_SET = 1 << cLatch
+#define C_LATCH_LOW GPIO_CLR = 1 << cLatch 
+#define C_ENABLE_HIGH GPIO_SET = 1 << cEnable
+#define C_ENABLE_LOW GPIO_CLR = 1 << cEnable
+#define C_RESET_HIGH GPIO_SET = 1 << cReset
+#define C_RESET_LOW GPIO_CLR = 1 << cReset
 
 // NOTE Could consolidate the Reset and enable pins possibly
 //      as well as the latch.  Test this later.
@@ -421,7 +421,7 @@ int main(int argc, char *argv[]) {
 
 	clsCols();
 	clsRows();
-	delay(50);
+	usleep(50000);
 
 	printf("average FPS: %f\n", (double)i / 15.0);
 
