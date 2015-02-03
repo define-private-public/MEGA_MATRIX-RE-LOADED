@@ -228,7 +228,7 @@ void setup() {
 }
 
 
-void loop() {  
+void display() {  
 //  unsigned long start = micros();
 	// Vars
 	int r, c, row, b;
@@ -311,22 +311,39 @@ void loop() {
 
 int main(int argc, char *argv[]) {
 	int i;
-	time_t cur;
-	time_t end;
+	clock_t cur;
+	clock_t end;
+	clock_t frameTime, avg;
 
 	wiringPiSetup();
 	setup();
 
 	cur = clock();
-	end = cur + (CLOCKS_PER_SEC * 5);
+	end = cur + (CLOCKS_PER_SEC * 15);
 	while (cur < end) {
-		loop();
+		// Display a frame and take the time
+//		frameTime = clock();
+		display();
+//		frameTime = clock() - frameTime;
+//		if (avg == 0)
+//			avg = frameTime;
+//		else {
+//			avg += frameTime;
+//			avg /= 2;
+//		}
+//		printf("%i\n", frameTime);
+
+		// The main loop timer
 		cur = clock();
+		i++;
 	}
 
 	clsCols();
 	clsRows();
 	delay(50);
 
+	printf("average FPS: %f\n", (double)i / 15.0);
+
 	return 0;
 }
+
