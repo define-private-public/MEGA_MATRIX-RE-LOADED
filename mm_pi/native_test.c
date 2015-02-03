@@ -77,24 +77,26 @@ int main(int argc, char *argv[]) {
 	setup_io();
 
 	// Swtich GPIOs 7 though 11 to output mode
-	for (g = 7; g <= 11; g++) {
+	for (g = 5; g <= 6; g++) {
 		INP_GPIO(g);
 		OUT_GPIO(g);
 		GPIO_CLR = 1 << g;			// SET it LOW
 	}
 
 	// Toggle the GPIOs
-	for (rep = 0; rep < 10; rep++) {
+	for (rep = 0; rep < 5; rep++) {
 		
 		printf("Repetition: %i\n", rep);
 
-		for (g = 7; g <= 11; g++) {
+		for (g = 5; g <= 6; g++) {
 			GPIO_SET = 1 << g;
 			printf("  HIGH: %i\n", g);
-			sleep(1);
+//			sleep(1);
+			usleep(500000);
 			GPIO_CLR = 1 << g;
 			printf("  LOW: %i\n", g);
-			sleep(1);
+//			sleep(1);
+			usleep(500000);
 		}
 	}
 	
