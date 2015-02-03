@@ -27,6 +27,7 @@
 // 1 = HIGH
 
 #include <stdio.h>
+#include <time.h>
 #include <unistd.h>
 #include <wiringPi.h>
 
@@ -143,32 +144,31 @@ unsigned char test_pattern[NUM_BYTES] = {
 //  B10101010, B10101010, B10101010,
 //  B01010101, B01010101, B01010101,
 //  B10101010, B10101010, B10101010,
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y',
-	'y', 'y', 'y'
+	'a', 'b', 'c',
+	'b', 'c', 'd',
+	'c', 'd', 'e',
+	'd', 'e', 'f',
+	'e', 'f', 'g',
+	'f', 'g', 'h',
+	'g', 'h', 'i',
+	'h', 'i', 'j',
+	'i', 'j', 'k',
+	'j', 'k', 'l',
+	'k', 'l', 'm',
+	'l', 'm', 'n',
+	'm', 'n', 'o',
+	'n', 'o', 'p',
+	'o', 'p', 'q',
+	'p', 'q', 'r',
+	'q', 'r', 's',
+	'r', 's', 't',
+	's', 't', 'u',
+	't', 'u', 'v',
+	'u', 'v', 'w',
+	'v', 'w', 'x',
+	'w', 'x', 'y',
+	'x', 'y', 'z'
 };
-
 
 
 void clsCols() {
@@ -188,8 +188,8 @@ void clsCols() {
 
 void clsRows() {
   // Clear out the shift register
-  C_RESET_LOW;
-  C_RESET_HIGH;
+  R_RESET_LOW;
+  R_RESET_HIGH;
 }
 
 
@@ -283,8 +283,6 @@ void loop() {
       R_CLOCK_LOW;
     }
     
-//    unsigned long start = micros();
-    
     // Send the buffers to output
     R_ENABLE_HIGH;
     C_ENABLE_HIGH;
@@ -297,38 +295,33 @@ void loop() {
     C_ENABLE_LOW;
     R_ENABLE_LOW;
     
-//    while ((start + 100) > micros())
-//      delayMicroseconds(10);
-
-    
     // for interlacing
     if (r == (NUM_ROWS - 2))
       r = -1;
-
-	
-	delay(1);
   }
   
 //  NOTE: This code was meant to clear out the last row, not sure if necessary or not.
-  R_DATA_LOW;
-  R_CLOCK_HIGH;
-  R_CLOCK_LOW;
-  R_LATCH_LOW;
-  R_LATCH_HIGH;
-
-  delay(1);
+//  R_DATA_LOW;
+//  R_CLOCK_HIGH;
+//  R_CLOCK_LOW;
+//  R_LATCH_LOW;
+//  R_LATCH_HIGH;
 }
 
 
 int main(int argc, char *argv[]) {
 	int i;
+	time_t cur;
+	time_t end;
 
 	wiringPiSetup();
 	setup();
 
-	for (i = 0; i < 5; i++) {
+	cur = clock();
+	end = cur + (CLOCKS_PER_SEC * 5);
+	while (cur < end) {
 		loop();
-		delay(1000);
+		cur = clock();
 	}
 
 	clsCols();
