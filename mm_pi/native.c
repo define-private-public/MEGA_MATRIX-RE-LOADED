@@ -60,19 +60,30 @@ volatile unsigned *gpio;
 #define GPIO_PULLCLK0 *(gpio + 38) 	// Pull up/pull down clock
 
 
-// Row: Acts as the emmiter, all pins on port D of atmega
-int rData = 5;
-int rClock = 6;
-int rLatch = 13;
-int rEnable = 19;
-int rReset = 26;
+//// Row: Acts as the emmiter, all pins on port D of atmega
+//int rData = 5;
+//int rClock = 6;
+//int rLatch = 13;
+//int rEnable = 19;
+//int rReset = 26;
+//
+//// Colunm: Acts as the Reicver, all pins on port B of atmega
+//int cData = 17;
+//int cClock = 27;
+//int cLatch = 22;
+//int cEnable = 23;
+//int cReset = 24;
+#define rData 5
+#define rClock 6
+#define rLatch 13
+#define rEnable 19
+#define rReset 26
 
-// Colunm: Acts as the Reicver, all pins on port B of atmega
-int cData = 17;
-int cClock = 27;
-int cLatch = 22;
-int cEnable = 23;
-int cReset = 24;
+#define cData 17
+#define cClock 27
+#define cLatch 22
+#define cEnable 23
+#define cReset 26
 
 int pins[10];
 
