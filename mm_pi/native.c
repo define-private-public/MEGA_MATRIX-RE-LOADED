@@ -324,6 +324,7 @@ void display() {
 //  unsigned long start = micros();
 	// Vars
 	int r, c, row, b;
+	unsigned char subRow;
   
   
   // Put up the image
@@ -333,10 +334,12 @@ void display() {
     
     // Put up the column
     for (c = 2; c >= 0; c--) {      
+	  subRow = image[row + c];
+
       // Do a shift out, LSB First
       for (b = 0; b < 8; b++) {
         // If a bit is 1, make it HIGH, else LOW
-        if (image[row + c] & (1 << b))
+        if (subRow & (1 << b))
           C_DATA_LOW;
         else
           C_DATA_HIGH;
