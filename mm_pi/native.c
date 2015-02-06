@@ -30,6 +30,7 @@
 // Includes
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <time.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -359,7 +360,8 @@ void display() {
 
 
 int main(int argc, char *argv[]) {
-	int i;
+	unsigned int i;
+	unsigned int secs = 15;
 	clock_t cur;
 	clock_t end;
 	clock_t frameTime, avg;
@@ -368,7 +370,7 @@ int main(int argc, char *argv[]) {
 	setup();
 
 	cur = clock();
-	end = cur + (CLOCKS_PER_SEC * 15);
+	end = cur + (CLOCKS_PER_SEC * secs);
 	while (cur < end) {
 		// Display a frame and take the time
 //		frameTime = clock();
@@ -384,14 +386,15 @@ int main(int argc, char *argv[]) {
 
 		// The main loop timer
 		cur = clock();
-		i++;
+		i += 1;
 	}
 
 	clsCols();
 	clsRows();
 	usleep(50000);
 
-	printf("average FPS: %f\n", (double)i / 15.0);
+//	printf("average FPS: %f\n", (double)i / 15.0);
+	printf("average FPS: %i\n", i / 15);
 
 	return 0;
 }
