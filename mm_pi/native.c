@@ -21,11 +21,13 @@
 // (n-1):     0   |   x   x   x   x
 // (n):       1   |   0   0   1   0
 // (n+1):     0   |   x   x   x   x
-
+//
 // x = Don't care
 // 0 = LOW
 // 1 = HIGH
 
+
+// Includes
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -33,11 +35,13 @@
 #include <fcntl.h>
 #include <sys/mman.h>
 
+// Raspberry Pi stuff
 #define BCM2708_PERI_BASE 0x20000000
 #define GPIO_BASE (BCM2708_PERI_BASE + 0x200000) /* GPIO Controler */
 #define PAGE_SIZE (4 * 1024)
 #define BLOCK_SIZE (4 * 1024)
 
+// Give us bools
 #define bool unsigned char
 #define true 1
 #define false 0
@@ -60,25 +64,14 @@ volatile unsigned *gpio;
 #define GPIO_PULLCLK0 *(gpio + 38) 	// Pull up/pull down clock
 
 
-//// Row: Acts as the emmiter, all pins on port D of atmega
-//int rData = 5;
-//int rClock = 6;
-//int rLatch = 13;
-//int rEnable = 19;
-//int rReset = 26;
-//
-//// Colunm: Acts as the Reicver, all pins on port B of atmega
-//int cData = 17;
-//int cClock = 27;
-//int cLatch = 22;
-//int cEnable = 23;
-//int cReset = 24;
+// Row: Acts as the emmiter, all pins on port D of atmega
 #define rData 5
 #define rClock 6
 #define rLatch 13
 #define rEnable 19
 #define rReset 26
 
+// Colunm: Acts as the Reicver, all pins on port B of atmega
 #define cData 17
 #define cClock 27
 #define cLatch 22
@@ -112,12 +105,6 @@ int pins[10];
 #define C_RESET_HIGH GPIO_SET = 1 << cReset
 #define C_RESET_LOW GPIO_CLR = 1 << cReset
 
-// NOTE Could consolidate the Reset and enable pins possibly
-//			as well as the latch.	Test this later.
-
-
-
-
 
 #define NUM_BYTES 72	// 24 * 3
 #define NUM_ROWS 24
@@ -133,7 +120,7 @@ void clsCols();
 void clsRows();
 void setup_gpio();
 void setup();
-inline void display();
+void display();
 
 
 //// Some patterns
@@ -165,30 +152,6 @@ inline void display();
 //};
 
 unsigned char test_pattern[NUM_BYTES] = {
-//	B01010101, B01010101, B01010101,
-//	B10101010, B10101010, B10101010,
-//	B01010101, B01010101, B01010101,
-//	B10101010, B10101010, B10101010,
-//	B01010101, B01010101, B01010101,
-//	B10101010, B10101010, B10101010,
-//	B01010101, B01010101, B01010101,
-//	B10101010, B10101010, B10101010,
-//	B01010101, B01010101, B01010101,
-//	B10101010, B10101010, B10101010,
-//	B01010101, B01010101, B01010101,
-//	B10101010, B10101010, B10101010,
-//	B01010101, B01010101, B01010101,
-//	B10101010, B10101010, B10101010,
-//	B01010101, B01010101, B01010101,
-//	B10101010, B10101010, B10101010,
-//	B01010101, B01010101, B01010101,
-//	B10101010, B10101010, B10101010,
-//	B01010101, B01010101, B01010101,
-//	B10101010, B10101010, B10101010,
-//	B01010101, B01010101, B01010101,
-//	B10101010, B10101010, B10101010,
-//	B01010101, B01010101, B01010101,
-//	B10101010, B10101010, B10101010,
 	'a', 'b', 'c',
 	'b', 'c', 'd',
 	'c', 'd', 'e',
@@ -240,6 +203,7 @@ void clsRows() {
 
 // Setup memory regions to access GPIO
 void setup_gpio() {
+	// Init the pin list
 	pins[0] = rData;
 	pins[1] = rClock;
 	pins[2] = rLatch;
@@ -283,18 +247,7 @@ void setup() {
 	int i;
 	int p;
 	
-//	// Set everything to output
-//	pinMode(rData, OUTPUT);
-//	pinMode(rClock, OUTPUT);
-//	pinMode(rLatch, OUTPUT);
-//	pinMode(rEnable, OUTPUT);
-//	pinMode(rReset, OUTPUT);
-//	pinMode(cData, OUTPUT);
-//	pinMode(cClock, OUTPUT);
-//	pinMode(cLatch, OUTPUT);
-//	pinMode(cEnable, OUTPUT);
-//	pinMode(cReset, OUTPUT);
-
+	// Set everything to output
 	for (p = 0; p < 10; p++) {
 		INP_GPIO(pins[p]);
 		OUT_GPIO(pins[p]);
@@ -321,7 +274,7 @@ void setup() {
 }
 
 
-inline void display() {	
+void display() {	
 //	unsigned long start = micros();
 	// Vars
 	int r, c, row, b;
@@ -396,7 +349,7 @@ inline void display() {
 			r = -1;
 	}
 	
-//	NOTE: This code was meant to clear out the last row, not sure if necessary or not.
+	//NOTE: This code was meant to clear out the last row, not sure if necessary or not.
 //	R_DATA_LOW;
 //	R_CLOCK_HIGH;
 //	R_CLOCK_LOW;
