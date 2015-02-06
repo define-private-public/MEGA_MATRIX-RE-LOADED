@@ -365,36 +365,46 @@ int main(int argc, char *argv[]) {
 	clock_t cur;
 	clock_t end;
 	clock_t frameTime, avg;
+	double totalSecs;
 
 	setup_gpio();
 	setup();
 
 	cur = clock();
-	end = cur + (CLOCKS_PER_SEC * secs);
-	while (cur < end) {
-		// Display a frame and take the time
-//		frameTime = clock();
+//	end = cur + (CLOCKS_PER_SEC * secs);
+//	while (cur < end) {
+//		// Display a frame and take the time
+////		frameTime = clock();
+//		display();
+////		frameTime = clock() - frameTime;
+////		if (avg == 0)
+////			avg = frameTime;
+////		else {
+////			avg += frameTime;
+////			avg /= 2;
+////		}
+////		printf("%i\n", frameTime);
+//
+//		// The main loop timer
+//		cur = clock();
+//		i++;
+//	}
+	while (i < 1000000) {
 		display();
-//		frameTime = clock() - frameTime;
-//		if (avg == 0)
-//			avg = frameTime;
-//		else {
-//			avg += frameTime;
-//			avg /= 2;
-//		}
-//		printf("%i\n", frameTime);
-
-		// The main loop timer
-		cur = clock();
-		i += 1;
+		i++;
 	}
+	end = clock();
 
 	clsCols();
 	clsRows();
 	usleep(50000);
 
 //	printf("average FPS: %f\n", (double)i / 15.0);
-	printf("average FPS: %i\n", i / 15);
+//	printf("average FPS: %i\n", i / 15);
+	totalSecs = (double)(end - cur) / CLOCKS_PER_SEC;
+	printf("num frames: %i\n", i);
+	printf("seconds: %f\n", totalSecs);
+	printf("average FPS: %f\n", (double)i / totalSecs);
 
 	return 0;
 }
