@@ -278,14 +278,14 @@ void setup() {
 void display() {	
 //	unsigned long start = micros();
 	// Vars
-	int r, c, row, b;
-	unsigned char subRow;
+	register short p, c, row, b;
+	register unsigned char subRow;
 	
 	
 	// Put up the image
-	for (r = 0; r < NUM_ROWS; r += 2) {
+	for (p = 0; p < NUM_ROWS; p += 2) {
 //		unsigned long start = micros();
-		row = r * 3;
+		row = p * 3;
 		
 		// Put up the column
 		for (c = 2; c >= 0; c--) {			
@@ -306,7 +306,7 @@ void display() {
 		}
 		
 		// the Row (need if block because of interlacting)
-		if (r == 0) {
+		if (p == 0) {
 			// First pass, row 1 should be high, row 2 low
 			R_DATA_LOW;
 			R_CLOCK_HIGH;
@@ -314,7 +314,7 @@ void display() {
 			R_DATA_HIGH;
 			R_CLOCK_HIGH;
 			R_CLOCK_LOW;
-		} else if (r == 1) {
+		} else if (p == 1) {
 			// Second pass, row 1 low, row 2 high
 			R_DATA_HIGH;
 			R_CLOCK_HIGH;
@@ -346,8 +346,8 @@ void display() {
 		R_ENABLE_LOW;
 		
 		// for interlacing
-		if (r == (NUM_ROWS - 2))
-			r = -1;
+		if (p == (NUM_ROWS - 2))
+			p = -1;
 	}
 	
 	//NOTE: This code was meant to clear out the last row, not sure if necessary or not.
