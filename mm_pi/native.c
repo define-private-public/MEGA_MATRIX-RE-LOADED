@@ -77,7 +77,7 @@ volatile unsigned *gpio;
 #define cClock 27
 #define cLatch 22
 #define cEnable 23
-#define cReset 26
+#define cReset 24
 
 int pins[10];
 
@@ -389,7 +389,7 @@ int main(int argc, char *argv[]) {
 //		cur = clock();
 //		i++;
 //	}
-	while (i < 1000000) {
+	while (i < 100000) {
 		display();
 		i++;
 	}
