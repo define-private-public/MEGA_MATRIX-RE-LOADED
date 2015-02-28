@@ -149,8 +149,8 @@ void setup() {
   C_RESET_HIGH;
   
   // XOR the whole image (pre-process)
-  for (int i = 0; i < NUM_BYTES; i++)
-    image[i] = CSH_logo[i];
+//  for (int i = 0; i < NUM_BYTES; i++)
+//    image[i] = CSH_logo[i];
 
   // Start with a clean slate
   R_ENABLE_HIGH;
