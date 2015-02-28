@@ -205,7 +205,7 @@ void loop() {
     
     bytesRead += 1;
     
-    if (bytesRead == 72) {
+    if (bytesRead == NUM_BYTES) {
       // Read in a whole image, set it to display
       memcpy(image, image_buffer, bytesRead);
       bytesRead = 0;
