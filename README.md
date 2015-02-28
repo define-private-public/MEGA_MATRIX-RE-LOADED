@@ -3,7 +3,7 @@ MEGA_MATRIX RE: LOADED
 
 This is a fork of 
 [MEGA_MATRIX](https://github.com/define-private-public/MEGA_MATRIX).  It is an
-interlocking panel system.  An **N**x**M** matrix of 8x8 LED matrices 
+interlocking panel system; An **N**x**M** matrix of 8x8 LED matrices 
 
  * You can find the firmware in `mm_arduino` (Arduino Uno's only).
  * You can find two applications to write images to MEGA_MATRIX RE:LOADED (MMR)
