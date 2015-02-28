@@ -9,10 +9,14 @@
 # Example
 #   python3 mm.py /dev/ttyACM0 banner/animation.txt
 #
-# An "image," is a 24x24 text file that contains only 1's and 0's.  A 1 means to turn the LED on,
+# An "image," is a NxM text file that contains only 1's and 0's.  A 1 means to turn the LED on,
 # and 0 means to turn it off.  Behaviour is undefined if you do anything else. 
 #
 # The language is as follows
+#
+# <R>x<C>: (or NxM)  This is how many rows by how many colums of LEDS are there.  <R> and <C>
+#          should be postive integers that are multiples of 24.  This is always on the first
+#          line of the file format.  E.g. (24x24, 24x48, 240x480).
 #
 # frames: [0], [1], [2], ... [n]
 #  -- The stuff here in the brackets should be filenames for valid MEGA_MATRIX image files
@@ -87,6 +91,11 @@ def main():
     # Read in the image file
     seqFile = open(seqFilename, 'r')
 
+	# get the dimensions
+    dim = seqFile.readline().split('x')
+    dimRows= int(dim[0])
+    dimCols = int(dim[1])
+    # TODO, swap the order from RowxColumn, to WidthxHeight (in all of the project)
 
     # Get the image files
     imageFiles = seqFile.readline()[7:]		# TODO bad constant splitting, figure out something better
@@ -107,19 +116,22 @@ def main():
 		# TODO need to make this here work for other sizes, have to adjust file format
         for line in f:
             line = line.strip(' \n\r')
+
+            for i in range(0, dimCols, 8):
+                data += '%c'%int(line[i:(i + 8)], 2)
             
-            b1 = line[:8]
-            b2 = line[8:16]
-            b3 = line[16:24]
-            b4 = line[24:32]
-            b5 = line[32:40]
-            b6 = line[40:]
-            data += '%c'%int(b1, 2)
-            data += '%c'%int(b2, 2)
-            data += '%c'%int(b3, 2)
-            data += '%c'%int(b4, 2)
-            data += '%c'%int(b5, 2)
-            data += '%c'%int(b6, 2)
+#            b1 = line[:8]
+#            b2 = line[8:16]
+#            b3 = line[16:24]
+#            b4 = line[24:32]
+#            b5 = line[32:40]
+#            b6 = line[40:]
+#            data += '%c'%int(b1, 2)
+#            data += '%c'%int(b2, 2)
+#            data += '%c'%int(b3, 2)
+#            data += '%c'%int(b4, 2)
+#            data += '%c'%int(b5, 2)
+#            data += '%c'%int(b6, 2)
 
         # Cleanup
         frameData[os.path.basename(imgFile)] = data

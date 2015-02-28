@@ -94,6 +94,7 @@ def main():
 	
 	# Write the animation file
 	animFile = open('%s/animation.txt'%dest, 'w')
+	animFile.write('%ix%i\n'%(dimRows, dimCols))
 	animFile.write('frames: 1.txt')
 	for i in range(2, col):
 		animFile.write(', %i.txt'%i)
