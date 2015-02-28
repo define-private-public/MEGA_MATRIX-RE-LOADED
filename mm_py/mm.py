@@ -104,6 +104,7 @@ def main():
         data = ''
         
         # Convert that data to a 72 byte thingy
+		# TODO need to make this here work for other sizes, have to adjust file format
         for line in f:
             line = line.strip(' \n\r')
             
