@@ -89,7 +89,7 @@ def main():
 
 
     # Get the image files
-    imageFiles = seqFile.readline()[7:]
+    imageFiles = seqFile.readline()[7:]		# TODO bad constant splitting, figure out something better
     imageFiles = imageFiles.split(',')
     for i in range(len(imageFiles)):
         imageFiles[i] = imageFiles[i].strip(' \n\r')
@@ -110,10 +110,16 @@ def main():
             
             b1 = line[:8]
             b2 = line[8:16]
-            b3 = line[16:]
+            b3 = line[16:24]
+            b4 = line[24:32]
+            b5 = line[32:40]
+            b6 = line[40:]
             data += '%c'%int(b1, 2)
             data += '%c'%int(b2, 2)
             data += '%c'%int(b3, 2)
+            data += '%c'%int(b4, 2)
+            data += '%c'%int(b5, 2)
+            data += '%c'%int(b6, 2)
 
         # Cleanup
         frameData[os.path.basename(imgFile)] = data

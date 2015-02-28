@@ -166,22 +166,22 @@ void loop() {
 //  unsigned long start = micros();
   
   // This is not using buffered IO like it should, will figure that out later
-//  byte bytesReady = Serial.available();
-//  while (bytesReady > 0) {
-//    // Get the next byte
-//    
-//    image_buffer[bytesRead] = (byte)Serial.read();
-//    
-//    bytesRead += 1;
-//    
-//    if (bytesRead == NUM_BYTES) {
-//      // Read in a whole image, set it to display
-//      memcpy(image, image_buffer, bytesRead);
-//      bytesRead = 0;
-//      bytesReady = 0;
-//    } else
-//      bytesReady = Serial.available();  // Loop again
-//  }
+  byte bytesReady = Serial.available();
+  while (bytesReady > 0) {
+    // Get the next byte
+    
+    image_buffer[bytesRead] = (byte)Serial.read();
+    
+    bytesRead += 1;
+    
+    if (bytesRead == NUM_BYTES) {
+      // Read in a whole image, set it to display
+      memcpy(image, image_buffer, bytesRead);
+      bytesRead = 0;
+      bytesReady = 0;
+    } else
+      bytesReady = Serial.available();  // Loop again
+  }
   
   // Put up the image
   for (int r = 0; r < NUM_ROWS; r += 2) {
