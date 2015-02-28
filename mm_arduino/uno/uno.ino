@@ -65,9 +65,11 @@ int cReset = 12;    // PB4
 #define C_RESET_LOW PORTB &= ~_BV(PB4)
 
 
-#define NUM_BYTES 144  // 48 * 3
-#define NUM_ROWS 24
-#define NUM_COLS 48
+#define NUM_BYTES 144  				// 24 * 6
+#define NUM_ROWS 24					// (in LEDs)
+#define NUM_COLS 48					// (in LEDs)
+#define NUM_ROWS_PER_COL 3			// (in Matrices)
+#define NUM_COLS_PER_ROW 6			// (in Matrices)
 boolean bufferReady = false;
 byte bytesRead = 0;
 byte image[NUM_BYTES];           // Image that's currently being displayed
@@ -147,7 +149,7 @@ void setup() {
   C_RESET_HIGH;
   
   // XOR the whole image (pre-process)
-  for (int i = 0; i < (24 * 3); i++)
+  for (int i = 0; i < NUM_BYTES; i++)
     image[i] = CSH_logo[i];
 
   // Start with a clean slate
@@ -184,10 +186,10 @@ void loop() {
   // Put up the image
   for (int r = 0; r < NUM_ROWS; r += 2) {
 //    unsigned long start = micros();
-    int row = r * 3;
+    int row = r * NUM_COLS_PER_ROW;
     
     // Put up the column
-    for (int c = 2; c >= 0; c--) {      
+    for (int c = (NUM_COLS_PER_ROW - 1); c >= 0; c--) {      
       // Do a shift out, LSB First
       for (int b = 0; b < 8; b++) {
         // If a bit is 1, make it HIGH, else LOW
