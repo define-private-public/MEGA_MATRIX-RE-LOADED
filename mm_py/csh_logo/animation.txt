@@ -1,3 +1,4 @@
+24x24
 frames: 1.txt, 2.txt, 3.txt, 4.txt
 start
 1.txt:500
