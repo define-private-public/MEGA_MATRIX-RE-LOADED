@@ -107,11 +107,13 @@ int pins[10];
 #define C_RESET_LOW GPIO_CLR = 1 << cReset
 
 
-#define NUM_BYTES 72	// 24 * 3
-#define NUM_ROWS 24
-#define NUM_COLS 24
+#define NUM_BYTES 288  				// 24 * 6
+#define NUM_ROWS 24					// (in LEDs)
+#define NUM_COLS 96					// (in LEDs)
+#define NUM_ROWS_PER_COL 3			// (in Matrices)
+#define NUM_COLS_PER_ROW 12			// (in Matrices)
 bool bufferReady = false;
-unsigned char bytesRead = 0;
+unsigned short bytesRead = 0;
 unsigned char image[NUM_BYTES];		 // Image that's currently being displayed
 unsigned char image_buffer[NUM_BYTES];		// Buffer for next image
 
@@ -152,32 +154,7 @@ void display();
 //	 B00000000, B00000000, B00000000,
 //};
 
-unsigned char test_pattern[NUM_BYTES] = {
-	'a', 'b', 'c',
-	'b', 'c', 'd',
-	'c', 'd', 'e',
-	'd', 'e', 'f',
-	'e', 'f', 'g',
-	'f', 'g', 'h',
-	'g', 'h', 'i',
-	'h', 'i', 'j',
-	'i', 'j', 'k',
-	'j', 'k', 'l',
-	'k', 'l', 'm',
-	'l', 'm', 'n',
-	'm', 'n', 'o',
-	'n', 'o', 'p',
-	'o', 'p', 'q',
-	'p', 'q', 'r',
-	'q', 'r', 's',
-	'r', 's', 't',
-	's', 't', 'u',
-	't', 'u', 'v',
-	'u', 'v', 'w',
-	'v', 'w', 'x',
-	'w', 'x', 'y',
-	'x', 'y', 'z'
-};
+unsigned char test_pattern[NUM_BYTES];
 
 
 void clsCols() {
@@ -260,9 +237,14 @@ void setup() {
 	C_ENABLE_LOW;
 	R_RESET_HIGH;
 	C_RESET_HIGH;
+
+	// Setup the test pattern
+	for (i = 0; i < NUM_BYTES; i++) {
+		test_pattern[i] = i % 0xFF;
+	}
 	
 	// XOR the whole image (pre-process)
-	for (i = 0; i < (24 * 3); i++)
+	for (i = 0; i < NUM_BYTES; i++)
 		image[i] = test_pattern[i];
 
 	// Start with a clean slate
@@ -285,10 +267,10 @@ void display() {
 	// Put up the image
 	for (p = 0; p < NUM_ROWS; p += 2) {
 //		unsigned long start = micros();
-		row = p * 3;
+		row = p * NUM_COLS_PER_ROW;
 		
 		// Put up the column
-		for (c = 2; c >= 0; c--) {			
+		for (c = (NUM_COLS_PER_ROW - 1); c >= 0; c--) {			
 		subRow = image[row + c];
 
 			// Do a shift out, LSB First
@@ -389,7 +371,7 @@ int main(int argc, char *argv[]) {
 //		cur = clock();
 //		i++;
 //	}
-	while (i < 100000) {
+	while (i < 1000000) {
 		display();
 		i++;
 	}
