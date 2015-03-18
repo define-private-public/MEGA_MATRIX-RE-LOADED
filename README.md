@@ -16,3 +16,4 @@ If you want to put anything else other than scrolling banners up on MMR read the
 source of the applications to know how to write images.  From there, have your
 own fun.
 
+Please note that the Raspberry Pi version is very experimental and unstable.
