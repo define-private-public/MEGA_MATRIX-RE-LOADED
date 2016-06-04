@@ -1,6 +1,8 @@
 MEGA_MATRIX RE: LOADED
 ======================
 
+**This project is Defunct**  It is only up here for archival purposes.
+
 This is a fork of 
 [MEGA_MATRIX](https://github.com/define-private-public/MEGA_MATRIX).  It is an
 interlocking panel system; An **N**x**M** matrix of 8x8 LED matrices 
